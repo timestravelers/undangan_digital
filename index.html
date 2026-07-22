@@ -3,34 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>InvitaAI Studio | Platform Undangan Digital Premium</title>
-    <meta name="description" content="Buat dan bagikan undangan digital premium dengan link unik, fitur RSVP, dan amplop digital.">
-    
-    <!-- Tailwind CSS -->
+    <title>InvitaAI Studio | Canva-like Digital Invitation Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+                    fontFamily: { 
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'], 
+                        serif: ['"Playfair Display"', 'serif'],
+                        script: ['"Great Vibes"', 'cursive']
+                    },
                     colors: {
-                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' },
-                        gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
+                        brand: { 500: '#0ea5e9', 600: '#0284c7' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b' }
                     }
                 }
             }
@@ -38,8 +27,10 @@
     </script>
 
     <style>
-        body { background-color: #f8fafc; }
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        body { background-color: #f1f5f9; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        
+        /* Phone Mockup */
         .phone-mockup {
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 10px #0f172a, 0 0 0 12px #334155;
             border-radius: 2.5rem; position: relative; overflow: hidden; background: #000;
@@ -48,25 +39,46 @@
             content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
             width: 40%; height: 24px; background: #0f172a; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 50;
         }
-        .pro-badge {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: #0f172a; font-size: 0.65rem; padding: 2px 8px; border-radius: 9999px; font-weight: 800; letter-spacing: 0.05em;
+
+        /* Canva-like Editable Elements */
+        .editable-pro {
+            transition: all 0.2s;
+            border: 2px solid transparent;
         }
+        .editable-pro:hover {
+            border: 2px dashed #0ea5e9;
+            cursor: text;
+            background: rgba(14, 165, 233, 0.05);
+        }
+        .editable-pro:focus {
+            outline: none;
+            border: 2px solid #0ea5e9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        /* Pro Lock Overlay */
+        .pro-lock-overlay {
+            position: absolute; inset: 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 20; border-radius: 0.75rem;
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Viewer Mode Styles */
+        /* Viewer Mode */
         .viewer-cover {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1000');
             background-size: cover; background-position: center;
         }
-        .blur-backdrop { backdrop-filter: blur(10px); background: rgba(255,255,255,0.7); }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen antialiased">
 
     <!-- ========================================== -->
-    <!-- MODE 1: EDITOR DASHBOARD (Default)         -->
+    <!-- MODE 1: EDITOR DASHBOARD                   -->
     <!-- ========================================== -->
     <div id="editorMode" class="hidden flex-col min-h-screen">
         <!-- Navbar -->
@@ -78,117 +90,214 @@
                             <i data-lucide="sparkles" class="w-4 h-4"></i>
                         </div>
                         <span class="text-xl font-bold tracking-tight text-slate-900">Invita<span class="text-brand-600">AI</span></span>
+                        <span id="userBadge" class="bg-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Free</span>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="hidden md:flex items-center gap-4 text-sm text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
-                            <span class="flex items-center gap-1"><i data-lucide="eye" class="w-4 h-4"></i> <b id="statViews">0</b> Views</span>
-                            <span class="w-px h-4 bg-slate-300"></span>
-                            <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> <b id="statRsvp">0</b> RSVP</span>
-                        </div>
-                        <button onclick="togglePricingModal()" class="bg-gradient-to-r from-slate-900 to-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-lg shadow-slate-900/20 flex items-center gap-2 hover:scale-105 transition">
-                            <i data-lucide="crown" class="w-4 h-4 text-gold-400"></i>
-                            <span>Upgrade Pro</span>
-                        </button>
-                    </div>
+                    <button onclick="togglePricingModal()" class="bg-gradient-to-r from-slate-900 to-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:scale-105 transition">
+                        <i data-lucide="crown" class="w-4 h-4 text-gold-400"></i>
+                        <span>Upgrade Pro</span>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <main class="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left: Controls -->
-            <section class="lg:col-span-5 space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-900 mb-1">Detail Acara</h2>
-                    <p class="text-sm text-slate-500 mb-5">Isi data, AI akan merangkai kata-kata indah secara otomatis.</p>
+        <main class="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- LEFT PANEL: CONTROLS -->
+            <section class="lg:col-span-4 space-y-4 h-[calc(100vh-80px)] overflow-y-auto no-scrollbar pr-2">
+                
+                <!-- Tabs -->
+                <div class="flex p-1 bg-slate-200 rounded-xl">
+                    <button onclick="switchTab('template')" id="tab-template" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white shadow-sm text-slate-900 transition">Template</button>
+                    <button onclick="switchTab('customize')" id="tab-customize" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1">
+                        Kustomisasi <i data-lucide="lock" class="w-3 h-3" id="lock-icon-customize"></i>
+                    </button>
+                </div>
 
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nama Mempelai</label>
-                            <input type="text" id="inputNames" value="Rania & Fikri" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50 focus:bg-white transition">
+                <!-- TAB: TEMPLATE -->
+                <div id="panel-template" class="space-y-4">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-slate-900 mb-4">Pilih Template Dasar</h3>
+                        <div class="grid grid-cols-1 gap-3">
+                            <button onclick="applyTemplate('classic')" class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition text-left group">
+                                <div class="w-12 h-12 rounded-lg bg-emerald-100 border border-emerald-200"></div>
+                                <div>
+                                    <div class="font-semibold text-slate-900 group-hover:text-brand-600">Royal Emerald</div>
+                                    <div class="text-xs text-slate-500">Klasik, Elegan, Formal</div>
+                                </div>
+                            </button>
+                            <button onclick="applyTemplate('modern')" class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition text-left group">
+                                <div class="w-12 h-12 rounded-lg bg-amber-100 border border-amber-200"></div>
+                                <div>
+                                    <div class="font-semibold text-slate-900 group-hover:text-brand-600">Minimalist Cream</div>
+                                    <div class="text-xs text-slate-500">Modern, Hangat, Bersih</div>
+                                </div>
+                            </button>
+                            <button onclick="applyTemplate('floral')" class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition text-left group relative overflow-hidden">
+                                <div class="absolute top-2 right-2 bg-gold-500 text-slate-900 text-[9px] font-bold px-1.5 py-0.5 rounded">PRO</div>
+                                <div class="w-12 h-12 rounded-lg bg-rose-100 border border-rose-200"></div>
+                                <div>
+                                    <div class="font-semibold text-slate-900 group-hover:text-brand-600">Romantic Floral</div>
+                                    <div class="text-xs text-slate-500">Manis, Bunga, Script Font</div>
+                                </div>
+                            </button>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Tanggal</label>
-                                <input type="date" id="inputDate" value="2026-10-15" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50 focus:bg-white transition">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Lokasi</label>
-                                <input type="text" id="inputLocation" value="Grand Ballroom, Jakarta" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50 focus:bg-white transition">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-2">
-                                Tema Undangan <span class="pro-badge">PRO</span>
-                            </label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <button onclick="selectTheme('classic')" id="btn-classic" class="theme-btn ring-2 ring-brand-500 bg-slate-50 border border-slate-200 rounded-xl p-3 text-center hover:bg-slate-100 transition">
-                                    <div class="w-8 h-8 rounded-full bg-emerald-100 mx-auto mb-2 border border-emerald-200"></div>
-                                    <span class="text-xs font-semibold text-slate-700">Emerald</span>
-                                </button>
-                                <button onclick="selectTheme('minimalist')" id="btn-minimalist" class="theme-btn bg-slate-50 border border-slate-200 rounded-xl p-3 text-center hover:bg-slate-100 transition relative">
-                                    <span class="absolute top-1 right-1 pro-badge text-[8px] px-1.5 py-0.5">PRO</span>
-                                    <div class="w-8 h-8 rounded-full bg-amber-100 mx-auto mb-2 border border-amber-200"></div>
-                                    <span class="text-xs font-semibold text-slate-700">Cream</span>
-                                </button>
-                                <button onclick="selectTheme('midnight')" id="btn-midnight" class="theme-btn bg-slate-50 border border-slate-200 rounded-xl p-3 text-center hover:bg-slate-100 transition relative">
-                                    <span class="absolute top-1 right-1 pro-badge text-[8px] px-1.5 py-0.5">PRO</span>
-                                    <div class="w-8 h-8 rounded-full bg-slate-800 mx-auto mb-2 border border-slate-600"></div>
-                                    <span class="text-xs font-semibold text-slate-700">Midnight</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <button onclick="generateAIContent()" id="btnGenerate" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl shadow-lg shadow-slate-900/20 transition-all duration-200 flex items-center justify-center gap-2 text-sm">
-                            <i data-lucide="wand-2" class="w-4 h-4"></i>
-                            <span>Generate Kata-kata AI</span>
-                        </button>
                     </div>
                 </div>
 
-                <!-- Publish Actions -->
-                <div class="bg-gradient-to-br from-brand-50 to-white rounded-2xl p-6 border border-brand-100">
-                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
-                        <i data-lucide="link" class="w-5 h-5 text-brand-600"></i> Bagikan Undangan
-                    </h3>
-                    <p class="text-sm text-slate-600 mb-4">Dapatkan link unik untuk dibagikan ke tamu via WhatsApp atau media sosial.</p>
-                    
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="shareLink" readonly value="https://invita.ai/u/..." class="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none">
-                        <button onclick="copyLink()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1">
-                            <i data-lucide="copy" class="w-4 h-4"></i> Salin
+                <!-- TAB: CUSTOMIZE (CANVA-LIKE) -->
+                <div id="panel-customize" class="space-y-4 relative">
+                    <!-- PRO LOCK OVERLAY -->
+                    <div id="customizeLock" class="pro-lock-overlay">
+                        <div class="bg-white p-4 rounded-full shadow-lg mb-3">
+                            <i data-lucide="lock" class="w-8 h-8 text-slate-400"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900">Fitur Premium</h4>
+                        <p class="text-xs text-slate-500 text-center px-6 mb-4">Buka kustomisasi warna, border, font, dan gambar layaknya Canva.</p>
+                        <button onclick="togglePricingModal()" class="bg-slate-900 text-white text-sm font-semibold px-6 py-2 rounded-lg hover:bg-slate-800 transition">Upgrade Sekarang</button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-5">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="palette" class="w-4 h-4 text-brand-600"></i> Kustomisasi Desain
+                        </h3>
+
+                        <!-- Background -->
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Latar Belakang</label>
+                            <div class="grid grid-cols-4 gap-2 mb-2">
+                                <button onclick="updateDesign('bgType', 'color')" class="h-10 rounded-lg bg-slate-100 border border-slate-300 flex items-center justify-center hover:border-brand-500"><i data-lucide="paint-bucket" class="w-4 h-4 text-slate-600"></i></button>
+                                <button onclick="updateDesign('bgType', 'image')" class="h-10 rounded-lg bg-slate-100 border border-slate-300 flex items-center justify-center hover:border-brand-500"><i data-lucide="image" class="w-4 h-4 text-slate-600"></i></button>
+                            </div>
+                            <div id="bgColorControl" class="flex items-center gap-2">
+                                <input type="color" id="inputBgColor" value="#ffffff" onchange="updateDesign('bgColor', this.value)" class="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                                <span class="text-xs text-slate-500">Pilih Warna</span>
+                            </div>
+                            <div id="bgImageControl" class="hidden space-y-2">
+                                <select onchange="updateDesign('bgImage', this.value)" class="w-full text-xs p-2 rounded-lg border border-slate-200 bg-slate-50">
+                                    <option value="">-- Pilih Gambar --</option>
+                                    <option value="https://images.unsplash.com/photo-1522673607200-1645062cd958?auto=format&fit=crop&w=600">Floral Soft</option>
+                                    <option value="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600">Wedding Ring</option>
+                                    <option value="custom">Upload URL Sendiri...</option>
+                                </select>
+                                <input type="text" id="customBgUrl" placeholder="Tempel URL Gambar..." class="hidden w-full text-xs p-2 rounded-lg border border-slate-200" oninput="updateDesign('bgImage', this.value)">
+                            </div>
+                        </div>
+
+                        <!-- Border Style -->
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Gaya Border</label>
+                            <select onchange="updateDesign('borderStyle', this.value)" class="w-full text-sm p-2.5 rounded-lg border border-slate-200 bg-slate-50">
+                                <option value="none">Tanpa Border</option>
+                                <option value="solid">Solid Elegan</option>
+                                <option value="double">Double Line (Klasik)</option>
+                                <option value="dashed">Dashed (Minimalis)</option>
+                            </select>
+                        </div>
+
+                        <!-- Typography -->
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Font Nama</label>
+                            <select onchange="updateDesign('fontFamily', this.value)" class="w-full text-sm p-2.5 rounded-lg border border-slate-200 bg-slate-50">
+                                <option value="font-serif">Playfair Display (Elegan)</option>
+                                <option value="font-script">Great Vibes (Sambungan)</option>
+                                <option value="font-sans">Jakarta Sans (Modern)</option>
+                            </select>
+                        </div>
+
+                        <!-- Primary Color -->
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Warna Aksen</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" id="inputAccentColor" value="#059669" onchange="updateDesign('accentColor', this.value)" class="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                                <div class="flex gap-2">
+                                    <button onclick="updateDesign('accentColor', '#059669')" class="w-6 h-6 rounded-full bg-emerald-600 border border-slate-200"></button>
+                                    <button onclick="updateDesign('accentColor', '#d97706')" class="w-6 h-6 rounded-full bg-amber-600 border border-slate-200"></button>
+                                    <button onclick="updateDesign('accentColor', '#be185d')" class="w-6 h-6 rounded-full bg-pink-700 border border-slate-200"></button>
+                                    <button onclick="updateDesign('accentColor', '#0f172a')" class="w-6 h-6 rounded-full bg-slate-900 border border-slate-200"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: CONTENT (Always Available) -->
+                <div id="panel-content" class="hidden space-y-4">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                        <h3 class="font-bold text-slate-900">Detail Teks</h3>
+                        <p class="text-xs text-slate-500">Tips: Pengguna Pro bisa klik teks langsung di preview untuk mengedit!</p>
+                        
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Nama Mempelai</label>
+                            <input type="text" id="inputNames" value="Rania & Fikri" oninput="syncText('previewNames', this.value); syncText('viewerNamesCover', this.value); syncText('viewerNamesMain', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Tanggal</label>
+                            <input type="date" id="inputDate" value="2026-10-15" oninput="updateDateDisplay(this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Lokasi</label>
+                            <input type="text" id="inputLocation" value="Grand Ballroom, Jakarta" oninput="syncText('previewLocation', this.value); syncText('viewerLocation', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Kata-kata Undangan</label>
+                            <textarea id="inputStory" rows="4" oninput="syncText('previewStory', this.value); syncText('viewerStory', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">"Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami..."</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PUBLISH ACTION -->
+                <div class="bg-gradient-to-br from-brand-50 to-white rounded-2xl p-5 border border-brand-100 sticky bottom-0">
+                    <button onclick="publishInvitation()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 mb-3">
+                        <i data-lucide="rocket" class="w-5 h-5"></i> Publish & Dapatkan Link
+                    </button>
+                    <div class="flex gap-2">
+                        <input type="text" id="shareLink" readonly value="https://invita.ai/u/..." class="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-500 outline-none">
+                        <button onclick="copyLink()" class="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-lg transition">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
                         </button>
                     </div>
-                    <button onclick="publishInvitation()" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-gold-500/30 transition flex items-center justify-center gap-2">
-                        <i data-lucide="rocket" class="w-5 h-5"></i>
-                        Publish & Dapatkan Link
-                    </button>
                 </div>
             </section>
 
-            <!-- Right: Live Preview -->
-            <section class="lg:col-span-7 flex flex-col items-center pt-4">
-                <div class="text-center mb-6">
-                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-widest">Pratinjau Langsung</h3>
+            <!-- RIGHT PANEL: LIVE PREVIEW (CANVAS) -->
+            <section class="lg:col-span-8 flex flex-col items-center pt-4">
+                <div class="text-center mb-4">
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-widest">Live Preview</h3>
+                    <p class="text-xs text-slate-400">Klik teks untuk mengedit (Khusus Pro)</p>
                 </div>
-                <div class="phone-mockup w-[300px] h-[600px] bg-white relative">
-                    <div id="previewScreen" class="w-full h-full overflow-y-auto no-scrollbar bg-white relative">
-                        <!-- Preview Content injected by JS -->
-                        <div id="previewHero" class="h-2/5 bg-emerald-50 flex flex-col items-center justify-center p-6 text-center relative transition-colors duration-500">
-                            <span id="previewBadge" class="absolute top-8 right-4 text-[9px] uppercase tracking-widest px-2 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800">Classic</span>
-                            <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold mb-3">The Wedding Of</p>
-                            <h2 id="previewNames" class="text-3xl font-serif font-bold text-slate-900 leading-tight mb-2">Rania & Fikri</h2>
-                            <div id="previewLine" class="w-16 h-0.5 bg-emerald-400 mx-auto rounded-full"></div>
+                
+                <div class="phone-mockup w-[320px] h-[640px] bg-white relative">
+                    <div id="previewCanvas" class="w-full h-full overflow-y-auto no-scrollbar relative transition-all duration-300" 
+                         style="background-color: #ffffff; border: 0px solid #000;">
+                        
+                        <!-- Watermark for Free -->
+                        <div id="watermark" class="absolute bottom-4 left-0 right-0 text-center z-30 pointer-events-none">
+                            <span class="text-[10px] text-slate-400 font-medium bg-white/80 px-2 py-1 rounded-full backdrop-blur-sm">Dibuat dengan InvitaAI Free</span>
                         </div>
-                        <div class="p-6 space-y-6">
-                            <p id="previewStory" class="text-xs text-slate-600 leading-relaxed italic text-center px-2">
-                                "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami..."
-                            </p>
-                            <div class="bg-slate-50 rounded-2xl p-4 text-xs space-y-2 border border-slate-100 text-center">
-                                <div class="font-semibold text-slate-700" id="previewDate">Rabu, 15 Oktober 2026</div>
-                                <div class="text-slate-500" id="previewLocation">Grand Ballroom, Jakarta</div>
+
+                        <!-- Editable Content -->
+                        <div class="min-h-full flex flex-col">
+                            <div class="h-2/5 flex flex-col items-center justify-center p-6 text-center relative">
+                                <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold mb-3">The Wedding Of</p>
+                                <h2 id="previewNames" class="text-3xl font-serif font-bold text-slate-900 leading-tight mb-2 editable-pro" contenteditable="false">Rania & Fikri</h2>
+                                <div id="previewLine" class="w-16 h-1 rounded-full mb-4" style="background-color: #059669;"></div>
                             </div>
-                            <button class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold tracking-widest uppercase">Konfirmasi Kehadiran</button>
+                            
+                            <div class="p-6 space-y-6 flex-1">
+                                <p id="previewStory" class="text-xs text-slate-600 leading-relaxed italic text-center px-2 editable-pro" contenteditable="false">
+                                    "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami..."
+                                </p>
+                                
+                                <div class="bg-slate-50/80 backdrop-blur rounded-2xl p-4 text-xs space-y-2 border border-slate-100 text-center">
+                                    <div class="font-semibold text-slate-700" id="previewDate">Rabu, 15 Oktober 2026</div>
+                                    <div class="w-8 h-px bg-slate-300 mx-auto"></div>
+                                    <div class="text-slate-500" id="previewLocation">Grand Ballroom, Jakarta</div>
+                                </div>
+
+                                <button class="w-full py-3 rounded-xl text-xs font-bold tracking-widest uppercase text-white transition" style="background-color: #059669;">
+                                    Konfirmasi Kehadiran
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -197,85 +306,37 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- MODE 2: INVITATION VIEWER (Saat link dibuka) -->
+    <!-- MODE 2: INVITATION VIEWER                  -->
     <!-- ========================================== -->
     <div id="viewerMode" class="hidden min-h-screen bg-slate-900 text-white">
-        <!-- Cover Screen -->
         <div id="coverScreen" class="fixed inset-0 z-50 viewer-cover flex flex-col items-center justify-center text-center p-6 transition-transform duration-1000">
-            <p class="text-sm uppercase tracking-[0.3em] text-slate-300 mb-4 animate-fade-in-up">The Wedding Of</p>
-            <h1 id="viewerNamesCover" class="text-5xl font-serif font-bold text-white mb-6 animate-fade-in-up" style="animation-delay: 0.2s">Rania & Fikri</h1>
-            <p class="text-slate-300 mb-8 animate-fade-in-up" style="animation-delay: 0.4s">Kepada Yth.<br><span class="text-white font-semibold text-lg">Bapak/Ibu/Saudara/i</span></p>
-            <button onclick="openInvitation()" class="animate-fade-in-up bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-sm tracking-wider hover:bg-gold-400 hover:scale-105 transition duration-300 flex items-center gap-2" style="animation-delay: 0.6s">
+            <p class="text-sm uppercase tracking-[0.3em] text-slate-300 mb-4">The Wedding Of</p>
+            <h1 id="viewerNamesCover" class="text-5xl font-serif font-bold text-white mb-6">Rania & Fikri</h1>
+            <button onclick="openInvitation()" class="bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-sm tracking-wider hover:bg-gold-400 transition flex items-center gap-2">
                 <i data-lucide="mail-open" class="w-4 h-4"></i> Buka Undangan
             </button>
         </div>
 
-        <!-- Main Invitation Content -->
-        <div id="mainContent" class="opacity-0 transition-opacity duration-1000">
-            <!-- Hero -->
-            <div id="viewerHero" class="min-h-screen bg-emerald-50 text-slate-900 flex flex-col items-center justify-center p-8 text-center relative">
+        <div id="mainContent" class="opacity-0 transition-opacity duration-1000" style="background-color: #ffffff; color: #0f172a;">
+            <div class="min-h-screen flex flex-col items-center justify-center p-8 text-center relative" id="viewerHeroBg">
                 <p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-4">We Are Getting Married</p>
                 <h1 id="viewerNamesMain" class="text-5xl md:text-6xl font-serif font-bold mb-6">Rania & Fikri</h1>
-                <div class="w-24 h-1 bg-emerald-400 rounded-full mb-8"></div>
+                <div class="w-24 h-1 rounded-full mb-8" id="viewerLine"></div>
                 <p id="viewerStory" class="max-w-md text-sm md:text-base text-slate-600 leading-relaxed italic mb-8">
                     "Dengan memohon rahmat dan ridho Allah SWT..."
                 </p>
-                <div class="text-2xl font-bold text-slate-800" id="viewerDate">15.10.2026</div>
             </div>
 
-            <!-- Details -->
-            <div class="bg-white py-16 px-6 text-center">
-                <h2 class="text-3xl font-serif font-bold text-slate-900 mb-8">Rangkaian Acara</h2>
-                <div class="max-w-md mx-auto bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4">
-                    <div>
-                        <h3 class="font-bold text-lg text-slate-800 mb-1">Akad Nikah</h3>
-                        <p class="text-slate-600 text-sm">08:00 - 10:00 WIB</p>
-                    </div>
-                    <div class="w-full h-px bg-slate-200"></div>
+            <div class="bg-white/50 backdrop-blur py-16 px-6 text-center">
+                <div class="max-w-md mx-auto bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 mb-1">Resepsi</h3>
-                        <p class="text-slate-600 text-sm" id="viewerLocation">Grand Ballroom, Jakarta</p>
-                    </div>
-                    <a href="#" class="inline-flex items-center gap-2 text-brand-600 font-semibold text-sm mt-4 hover:underline">
-                        <i data-lucide="map-pin" class="w-4 h-4"></i> Lihat Lokasi di Google Maps
-                    </a>
-                </div>
-            </div>
-
-            <!-- Amplop Digital (Fitur Cuan!) -->
-            <div class="bg-slate-50 py-16 px-6 text-center border-t border-slate-200">
-                <h2 class="text-2xl font-serif font-bold text-slate-900 mb-2">Amplop Digital</h2>
-                <p class="text-sm text-slate-500 mb-8">Doa restu Anda merupakan karunia yang sangat berarti bagi kami.</p>
-                
-                <div class="max-w-sm mx-auto bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-left space-y-4">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs">BCA</div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase">Bank BCA</p>
-                            <p class="text-lg font-bold text-slate-900">1234 5678 90</p>
-                            <p class="text-sm text-slate-600">a.n. Rania Putri</p>
-                        </div>
-                        <button onclick="copyToClipboard('1234567890')" class="ml-auto text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg font-semibold text-slate-700 transition">Salin</button>
+                        <p class="text-slate-600 text-sm" id="viewerDate">15 Oktober 2026</p>
+                        <p class="text-slate-600 text-sm font-semibold mt-1" id="viewerLocation">Grand Ballroom, Jakarta</p>
                     </div>
                 </div>
             </div>
 
-            <!-- RSVP -->
-            <div class="bg-white py-16 px-6 text-center">
-                <h2 class="text-3xl font-serif font-bold text-slate-900 mb-6">Konfirmasi Kehadiran</h2>
-                <form onsubmit="event.preventDefault(); showToast('✅ RSVP berhasil dikirim!');" class="max-w-md mx-auto space-y-4 text-left">
-                    <input type="text" placeholder="Nama Anda" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm">
-                    <select class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm bg-white">
-                        <option>Hadir</option>
-                        <option>Tidak Hadir</option>
-                        <option>Masih Ragu</option>
-                    </select>
-                    <textarea placeholder="Ucapan & Doa" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm"></textarea>
-                    <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">Kirim Konfirmasi</button>
-                </form>
-            </div>
-
-            <!-- Footer -->
             <footer class="bg-slate-900 text-slate-400 py-8 text-center text-xs">
                 <p class="mb-2">Made with ❤️ by <span class="text-white font-semibold">InvitaAI Studio</span></p>
                 <button onclick="window.location.href = window.location.pathname" class="text-brand-400 hover:text-brand-300 underline">Buat Undangan Anda Sendiri</button>
@@ -288,30 +349,30 @@
         <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" onclick="togglePricingModal()"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl p-4">
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
-                <div class="p-8 text-center border-b border-slate-100">
+                <div class="p-8 text-center border-b border-slate-100 bg-slate-50">
                     <h2 class="text-2xl font-bold text-slate-900">Upgrade ke Premium</h2>
-                    <p class="text-slate-500 mt-2">Buka fitur eksklusif untuk undangan yang lebih berkesan.</p>
+                    <p class="text-slate-500 mt-2">Buka fitur editor layaknya Canva untuk undangan yang unik.</p>
                 </div>
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-                    <div class="p-8">
+                <div class="grid md:grid-cols-2">
+                    <div class="p-8 border-r border-slate-100">
                         <h3 class="text-lg font-bold text-slate-900">Gratis</h3>
                         <div class="my-4 text-3xl font-bold">Rp0</div>
                         <ul class="space-y-3 mb-8 text-sm text-slate-600">
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> 1 Tema Dasar</li>
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Link Undangan Aktif</li>
-                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Watermark InvitaAI</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> 1 Template Dasar</li>
+                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Tidak bisa ubah warna/border</li>
+                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Watermark "InvitaAI Free"</li>
                         </ul>
                         <button onclick="togglePricingModal()" class="w-full py-2.5 rounded-xl border border-slate-200 font-semibold">Paket Saat Ini</button>
                     </div>
                     <div class="p-8 bg-slate-900 text-white relative">
                         <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gold-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full">TERLARIS</div>
-                        <h3 class="text-lg font-bold text-gold-400">Premium</h3>
-                        <div class="my-4 text-3xl font-bold">Rp49.000<span class="text-sm text-slate-400 font-normal">/undangan</span></div>
+                        <h3 class="text-lg font-bold text-gold-400">Premium Creator</h3>
+                        <div class="my-4 text-3xl font-bold">Rp49.000</div>
                         <ul class="space-y-3 mb-8 text-sm text-slate-200">
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Semua Tema Eksklusif</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Canva-like Editor:</b> Ubah warna, border, font</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Direct Edit:</b> Klik teks langsung di preview</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Custom Background:</b> Upload gambar sendiri</li>
                             <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Tanpa Watermark</li>
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Fitur Amplop Digital</li>
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Musik Latar & Animasi</li>
                         </ul>
                         <button onclick="simulateCheckout()" class="w-full py-2.5 rounded-xl bg-gold-500 text-slate-900 font-bold hover:bg-gold-400 transition">Beli Sekarang</button>
                     </div>
@@ -329,151 +390,251 @@
     <script>
         lucide.createIcons();
 
-        // --- 1. ROUTING: Cek apakah mode Viewer atau Editor ---
+        // --- 1. STATE MANAGEMENT ---
         const urlParams = new URLSearchParams(window.location.search);
         const viewData = urlParams.get('view');
 
+        // Default State
+        let state = {
+            isPro: false,
+            names: "Rania & Fikri",
+            date: "2026-10-15",
+            location: "Grand Ballroom, Jakarta",
+            story: "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami...",
+            design: {
+                bgType: 'color', // 'color' or 'image'
+                bgColor: '#ffffff',
+                bgImage: '',
+                borderStyle: 'none',
+                fontFamily: 'font-serif',
+                accentColor: '#059669'
+            }
+        };
+
+        // --- 2. ROUTING ---
         if (viewData) {
-            // MODE VIEWER
             document.getElementById('editorMode').classList.add('hidden');
             document.getElementById('viewerMode').classList.remove('hidden');
             document.getElementById('viewerMode').classList.add('flex', 'flex-col');
             
             try {
-                const data = JSON.parse(atob(viewData));
-                document.getElementById('viewerNamesCover').innerText = data.names;
-                document.getElementById('viewerNamesMain').innerText = data.names;
-                document.getElementById('viewerLocation').innerText = data.location;
+                const parsed = JSON.parse(atob(viewData));
+                state = { ...state, ...parsed }; // Merge saved state
                 
-                const dateObj = new Date(data.date);
+                // Apply to Viewer DOM
+                document.getElementById('viewerNamesCover').innerText = state.names;
+                document.getElementById('viewerNamesMain').innerText = state.names;
+                document.getElementById('viewerNamesMain').className = `text-5xl md:text-6xl font-bold mb-6 ${state.design.fontFamily}`;
+                document.getElementById('viewerLocation').innerText = state.location;
+                document.getElementById('viewerStory').innerText = state.story;
+                
+                const dateObj = new Date(state.date);
                 document.getElementById('viewerDate').innerText = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                // Apply Viewer Design
+                const mainContent = document.getElementById('mainContent');
+                const heroBg = document.getElementById('viewerHeroBg');
                 
-                // Terapkan tema
-                applyViewerTheme(data.theme);
+                if (state.design.bgType === 'image' && state.design.bgImage) {
+                    mainContent.style.backgroundImage = `url(${state.design.bgImage})`;
+                    mainContent.style.backgroundSize = 'cover';
+                    mainContent.style.backgroundPosition = 'center';
+                } else {
+                    mainContent.style.backgroundColor = state.design.bgColor;
+                }
+
+                // Border logic for viewer card
+                const card = document.querySelector('#mainContent .max-w-md');
+                if(state.design.borderStyle === 'double') card.classList.add('border-4', 'border-double');
+                else if(state.design.borderStyle === 'dashed') card.classList.add('border-2', 'border-dashed');
+                else if(state.design.borderStyle === 'solid') card.classList.add('border-4', 'border-solid');
+                
+                document.getElementById('viewerLine').style.backgroundColor = state.design.accentColor;
+
             } catch (e) {
-                console.error("Invalid invite data");
+                console.error("Invalid invite data", e);
             }
         } else {
-            // MODE EDITOR
             document.getElementById('editorMode').classList.remove('hidden');
             document.getElementById('editorMode').classList.add('flex');
-            generateAIContent(); // Initial load
+            renderEditor();
         }
 
-        // --- 2. EDITOR LOGIC ---
-        let currentTheme = 'classic';
-        let isPro = false;
+        // --- 3. EDITOR LOGIC ---
+        function renderEditor() {
+            // Sync inputs with state
+            document.getElementById('inputNames').value = state.names;
+            document.getElementById('inputDate').value = state.date;
+            document.getElementById('inputLocation').value = state.location;
+            document.getElementById('inputStory').value = state.story;
+            
+            updateDateDisplay(state.date);
+            applyDesignToPreview();
+            updateProUI();
+        }
 
-        const themes = {
-            classic: { name: 'Royal Emerald', hero: 'bg-emerald-50', accent: 'bg-emerald-400', badge: 'bg-emerald-100 text-emerald-800', story: "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah {names} yang insya Allah akan dilaksanakan dengan penuh khidmat." },
-            minimalist: { name: 'Minimalist Cream', hero: 'bg-amber-50', accent: 'bg-amber-400', badge: 'bg-amber-100 text-amber-800', story: "Sebuah babak baru dimulai. Merupakan suatu kebahagiaan istimewa bagi {names} atas kehadiran dan doa restu Anda di hari yang sederhana namun penuh makna ini." },
-            midnight: { name: 'Midnight Gold', hero: 'bg-slate-900', accent: 'bg-gold-500', badge: 'bg-slate-800 text-gold-400 border border-gold-500/30', story: "Di bawah bintang dan cahaya rembulan, {names} mengundang Anda untuk menjadi saksi penyatuan dua hati dalam balutan elegan dan mewah." }
-        };
+        function syncText(elementId, value) {
+            document.getElementById(elementId).innerText = value;
+            // Update state
+            if(elementId === 'previewNames') state.names = value;
+            if(elementId === 'previewStory') state.story = value;
+            if(elementId === 'previewLocation') state.location = value;
+        }
 
-        function selectTheme(theme) {
-            if ((theme === 'minimalist' || theme === 'midnight') && !isPro) {
-                showToast('🔒 Tema ini khusus Premium. Upgrade untuk membuka!', 'error');
+        function updateDateDisplay(dateVal) {
+            state.date = dateVal;
+            const d = new Date(dateVal);
+            const formatted = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('previewDate').innerText = formatted;
+        }
+
+        // --- 4. CANVA-LIKE CUSTOMIZATION ---
+        function updateDesign(key, value) {
+            if (!state.isPro && key !== 'bgType') {
                 togglePricingModal();
                 return;
             }
-            currentTheme = theme;
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-brand-500', 'bg-slate-100');
-                btn.classList.add('bg-slate-50');
+
+            if (key === 'bgType') {
+                state.design.bgType = value;
+                document.getElementById('bgColorControl').classList.toggle('hidden', value !== 'color');
+                document.getElementById('bgImageControl').classList.toggle('hidden', value !== 'image');
+                if (value === 'image' && document.getElementById('customBgUrl').value) {
+                    state.design.bgImage = document.getElementById('customBgUrl').value;
+                }
+            } else if (key === 'bgImage' && value === 'custom') {
+                document.getElementById('customBgUrl').classList.remove('hidden');
+                return; // Wait for input
+            } else {
+                state.design[key] = value;
+            }
+
+            applyDesignToPreview();
+        }
+
+        function applyDesignToPreview() {
+            const canvas = document.getElementById('previewCanvas');
+            const line = document.getElementById('previewLine');
+            const btn = document.querySelector('#previewCanvas button');
+            const names = document.getElementById('previewNames');
+
+            // Background
+            if (state.design.bgType === 'image' && state.design.bgImage) {
+                canvas.style.backgroundImage = `url(${state.design.bgImage})`;
+                canvas.style.backgroundSize = 'cover';
+                canvas.style.backgroundPosition = 'center';
+                canvas.style.backgroundColor = 'transparent';
+            } else {
+                canvas.style.backgroundImage = 'none';
+                canvas.style.backgroundColor = state.design.bgColor;
+            }
+
+            // Border
+            canvas.style.border = '0px'; // reset
+            canvas.classList.remove('border-4', 'border-double', 'border-2', 'border-dashed', 'border-solid', 'border-slate-300');
+            if (state.design.borderStyle === 'double') canvas.classList.add('border-4', 'border-double', 'border-slate-300');
+            if (state.design.borderStyle === 'dashed') canvas.classList.add('border-2', 'border-dashed', 'border-slate-300');
+            if (state.design.borderStyle === 'solid') canvas.classList.add('border-4', 'border-solid', 'border-slate-300');
+
+            // Typography & Accent
+            names.className = `text-3xl font-bold leading-tight mb-2 editable-pro ${state.design.fontFamily}`;
+            names.style.color = state.design.accentColor; // Optional: make name accent color
+            line.style.backgroundColor = state.design.accentColor;
+            btn.style.backgroundColor = state.design.accentColor;
+        }
+
+        // Direct Edit (ContentEditable) for Pro
+        document.querySelectorAll('.editable-pro').forEach(el => {
+            el.addEventListener('click', function() {
+                if (!state.isPro) {
+                    showToast('🔒 Upgrade Pro untuk edit teks langsung di canvas!', 'error');
+                    togglePricingModal();
+                    return;
+                }
+                this.contentEditable = true;
+                this.focus();
             });
-            const activeBtn = document.getElementById(`btn-${theme}`);
-            activeBtn.classList.add('ring-2', 'ring-brand-500', 'bg-slate-100');
-            activeBtn.classList.remove('bg-slate-50');
-            generateAIContent();
-        }
-
-        function generateAIContent() {
-            const names = document.getElementById('inputNames').value || 'Mempelai';
-            const date = document.getElementById('inputDate').value;
-            const location = document.getElementById('inputLocation').value;
-            const btn = document.getElementById('btnGenerate');
-
-            // Loading state
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>AI Merangkai Kata...</span>`;
-            btn.disabled = true;
-            lucide.createIcons();
-
-            setTimeout(() => {
-                const t = themes[currentTheme];
-                
-                // Update Preview DOM
-                document.getElementById('previewNames').innerText = names;
-                document.getElementById('previewLocation').innerText = location;
-                if(date) {
-                    document.getElementById('previewDate').innerText = new Date(date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-                }
-
-                const hero = document.getElementById('previewHero');
-                hero.className = `h-2/5 flex flex-col items-center justify-center p-6 text-center relative transition-colors duration-500 ${t.hero}`;
-                
-                document.getElementById('previewBadge').className = `absolute top-8 right-4 text-[9px] uppercase tracking-widest px-2 py-1 rounded-full font-bold transition-colors duration-500 ${t.badge}`;
-                document.getElementById('previewBadge').innerText = t.name;
-                
-                document.getElementById('previewLine').className = `w-16 h-0.5 mx-auto rounded-full transition-colors duration-500 ${t.accent}`;
-                
-                if (currentTheme === 'midnight') {
-                    document.getElementById('previewNames').classList.replace('text-slate-900', 'text-white');
-                } else {
-                    document.getElementById('previewNames').classList.replace('text-white', 'text-slate-900');
-                }
-
-                // Typing effect
-                const finalStory = t.story.replace('{names}', names);
-                const storyEl = document.getElementById('previewStory');
-                storyEl.innerText = "";
-                let i = 0;
-                const typeWriter = () => {
-                    if (i < finalStory.length) {
-                        storyEl.innerHTML += finalStory.charAt(i);
-                        i++;
-                        setTimeout(typeWriter, 15);
-                    }
-                };
-                typeWriter();
-
-                // Reset button
-                btn.innerHTML = `<i data-lucide="wand-2" class="w-4 h-4"></i><span>Generate Kata-kata AI</span>`;
-                btn.disabled = false;
-                lucide.createIcons();
-            }, 800);
-        }
-
-        // --- 3. PUBLISH & LINK GENERATION (LADANG CUAN CORE) ---
-        function publishInvitation() {
-            const names = document.getElementById('inputNames').value || 'Undangan';
-            const data = {
-                names: names,
-                date: document.getElementById('inputDate').value,
-                location: document.getElementById('inputLocation').value,
-                theme: currentTheme
-            };
             
-            // Encode data ke Base64 untuk URL
-            const encoded = btoa(JSON.stringify(data));
+            el.addEventListener('blur', function() {
+                this.contentEditable = false;
+                // Sync back to state and inputs
+                if (this.id === 'previewNames') {
+                    state.names = this.innerText;
+                    document.getElementById('inputNames').value = this.innerText;
+                }
+                if (this.id === 'previewStory') {
+                    state.story = this.innerText;
+                    document.getElementById('inputStory').value = this.innerText;
+                }
+            });
+        });
+
+        // --- 5. TEMPLATES ---
+        function applyTemplate(type) {
+            if (type === 'floral' && !state.isPro) {
+                showToast('🔒 Template Floral khusus Premium!', 'error');
+                togglePricingModal();
+                return;
+            }
+
+            if (type === 'classic') {
+                updateDesign('bgColor', '#ffffff');
+                updateDesign('accentColor', '#059669');
+                updateDesign('fontFamily', 'font-serif');
+                updateDesign('borderStyle', 'none');
+            } else if (type === 'modern') {
+                updateDesign('bgColor', '#fffbeb'); // amber-50
+                updateDesign('accentColor', '#d97706');
+                updateDesign('fontFamily', 'font-sans');
+                updateDesign('borderStyle', 'solid');
+            } else if (type === 'floral') {
+                updateDesign('bgType', 'image');
+                updateDesign('bgImage', 'https://images.unsplash.com/photo-1522673607200-1645062cd958?auto=format&fit=crop&w=600');
+                updateDesign('accentColor', '#be185d');
+                updateDesign('fontFamily', 'font-script');
+                updateDesign('borderStyle', 'double');
+            }
+            showToast('✅ Template diterapkan!');
+        }
+
+        // --- 6. FREEMIUM & PUBLISH ---
+        function updateProUI() {
+            const badge = document.getElementById('userBadge');
+            const lock = document.getElementById('customizeLock');
+            const lockIcon = document.getElementById('lock-icon-customize');
+            const watermark = document.getElementById('watermark');
+
+            if (state.isPro) {
+                badge.innerText = 'PRO';
+                badge.className = 'bg-gold-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase';
+                lock.classList.add('hidden');
+                lockIcon.classList.add('hidden');
+                watermark.classList.add('hidden');
+                
+                // Enable contenteditable hints
+                document.querySelectorAll('.editable-pro').forEach(el => {
+                    el.setAttribute('contenteditable', 'true');
+                });
+            } else {
+                badge.innerText = 'FREE';
+                badge.className = 'bg-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase';
+                lock.classList.remove('hidden');
+                lockIcon.classList.remove('hidden');
+                watermark.classList.remove('hidden');
+            }
+        }
+
+        function publishInvitation() {
+            // Sanitize: remove HTML tags from contenteditable to prevent XSS in URL
+            state.names = document.getElementById('previewNames').innerText;
+            state.story = document.getElementById('previewStory').innerText;
+
+            const encoded = btoa(JSON.stringify(state));
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}?view=${encoded}`;
             
             document.getElementById('shareLink').value = shareUrl;
-            
-            // Simulasi update stats
-            document.getElementById('statViews').innerText = Math.floor(Math.random() * 50) + 1;
-            
-            showToast('🚀 Undangan berhasil dipublish! Link siap dibagikan.');
-            
-            // Animasi feedback
-            const btn = document.querySelector('button[onclick="publishInvitation()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i> Published!`;
-            lucide.createIcons();
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                lucide.createIcons();
-            }, 2000);
+            showToast('🚀 Undangan dipublish! Link siap disalin.');
         }
 
         function copyLink() {
@@ -482,57 +643,33 @@
                 showToast('⚠️ Publish undangan terlebih dahulu!', 'error');
                 return;
             }
-            copyToClipboard(link);
+            navigator.clipboard.writeText(link).then(() => showToast('✅ Link disalin!'));
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('✅ Teks berhasil disalin!');
+        // --- 7. UTILITIES ---
+        function switchTab(tab) {
+            ['template', 'customize', 'content'].forEach(t => {
+                document.getElementById(`panel-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+                document.getElementById(`tab-${t}`).classList.add('text-slate-600');
             });
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+            document.getElementById(`tab-${tab}`).classList.remove('text-slate-600');
         }
 
-        // --- 4. VIEWER LOGIC ---
-        function openInvitation() {
-            const cover = document.getElementById('coverScreen');
-            const main = document.getElementById('mainContent');
-            
-            cover.style.transform = 'translateY(-100%)';
-            setTimeout(() => {
-                main.classList.remove('opacity-0');
-                main.classList.add('animate-fade-in-up');
-                // Di sini bisa ditambahkan: document.getElementById('bgMusic').play();
-            }, 500);
-        }
-
-        function applyViewerTheme(theme) {
-            const t = themes[theme];
-            const hero = document.getElementById('viewerHero');
-            hero.className = `min-h-screen flex flex-col items-center justify-center p-8 text-center relative transition-colors duration-500 ${t.hero}`;
-            
-            if (theme === 'midnight') {
-                hero.classList.add('text-white');
-                hero.querySelector('p').classList.replace('text-slate-500', 'text-slate-300');
-                hero.querySelector('h1').classList.replace('text-slate-900', 'text-white');
-                hero.querySelector('div').classList.replace('bg-emerald-400', 'bg-gold-500');
-                hero.querySelector('p.italic').classList.replace('text-slate-600', 'text-slate-300');
-                hero.querySelector('.text-2xl').classList.replace('text-slate-800', 'text-white');
-            }
-        }
-
-        // --- 5. UTILITIES ---
         function togglePricingModal() {
-            const modal = document.getElementById('pricingModal');
-            modal.classList.toggle('hidden');
+            document.getElementById('pricingModal').classList.toggle('hidden');
         }
 
         function simulateCheckout() {
-            showToast('⏳ Mengalihkan ke gateway pembayaran...');
+            showToast('⏳ Memproses pembayaran...');
             setTimeout(() => {
-                isPro = true;
+                state.isPro = true;
                 togglePricingModal();
-                showToast('🎉 Upgrade Berhasil! Semua tema Premium terbuka.');
-                // Buka kunci UI
-                document.querySelectorAll('.pro-badge').forEach(b => b.style.display = 'none');
+                updateProUI();
+                showToast('🎉 Selamat! Fitur Canva-like Editor telah terbuka.');
+                switchTab('customize'); // Auto switch to show the unlocked features
             }, 1500);
         }
 
@@ -543,14 +680,12 @@
             setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
         }
 
-        // Auto-generate saat input berubah (debounced)
-        let timeout;
-        document.querySelectorAll('#editorMode input').forEach(input => {
-            input.addEventListener('input', () => {
-                clearTimeout(timeout);
-                timeout = setTimeout(generateAIContent, 600);
-            });
-        });
+        function openInvitation() {
+            document.getElementById('coverScreen').style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                document.getElementById('mainContent').classList.remove('opacity-0');
+            }, 500);
+        }
     </script>
 </body>
 </html>
