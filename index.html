@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>InvitaAI Studio | Canva-like Digital Invitation Builder</title>
+    <title>InvitaAI Studio | 100+ Template Undangan Digital Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Great+Vibes&family=Cormorant+Garamond:wght@400;600;700&family=Dancing+Script:wght@400;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
@@ -15,7 +15,10 @@
                     fontFamily: { 
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'], 
                         serif: ['"Playfair Display"', 'serif'],
-                        script: ['"Great Vibes"', 'cursive']
+                        garamond: ['"Cormorant Garamond"', 'serif'],
+                        script: ['"Great Vibes"', 'cursive'],
+                        dancing: ['"Dancing Script"', 'cursive'],
+                        cinzel: ['"Cinzel"', 'serif']
                     },
                     colors: {
                         brand: { 500: '#0ea5e9', 600: '#0284c7' },
@@ -30,7 +33,6 @@
         body { background-color: #f1f5f9; }
         .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
         
-        /* Phone Mockup */
         .phone-mockup {
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 10px #0f172a, 0 0 0 12px #334155;
             border-radius: 2.5rem; position: relative; overflow: hidden; background: #000;
@@ -40,38 +42,40 @@
             width: 40%; height: 24px; background: #0f172a; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 50;
         }
 
-        /* Canva-like Editable Elements */
-        .editable-pro {
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-        .editable-pro:hover {
-            border: 2px dashed #0ea5e9;
-            cursor: text;
-            background: rgba(14, 165, 233, 0.05);
-        }
-        .editable-pro:focus {
-            outline: none;
-            border: 2px solid #0ea5e9;
-            background: rgba(14, 165, 233, 0.1);
-        }
+        .editable-pro { transition: all 0.2s; border: 2px solid transparent; }
+        .editable-pro:hover { border: 2px dashed #0ea5e9; cursor: text; background: rgba(14, 165, 233, 0.05); }
+        .editable-pro:focus { outline: none; border: 2px solid #0ea5e9; background: rgba(14, 165, 233, 0.1); }
 
-        /* Pro Lock Overlay */
         .pro-lock-overlay {
             position: absolute; inset: 0;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 20; border-radius: 0.75rem;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Viewer Mode */
+
+        .template-card {
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .template-card:hover { transform: translateY(-2px); }
+        .template-card.active { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+
         .viewer-cover {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1000');
             background-size: cover; background-position: center;
+        }
+
+        .category-pill {
+            transition: all 0.2s;
+        }
+        .category-pill.active {
+            background: #0f172a;
+            color: white;
         }
     </style>
 </head>
@@ -81,7 +85,6 @@
     <!-- MODE 1: EDITOR DASHBOARD                   -->
     <!-- ========================================== -->
     <div id="editorMode" class="hidden flex-col min-h-screen">
-        <!-- Navbar -->
         <header class="sticky top-0 z-40 glass-panel border-b border-slate-200/60">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
@@ -102,117 +105,115 @@
 
         <main class="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- LEFT PANEL: CONTROLS -->
-            <section class="lg:col-span-4 space-y-4 h-[calc(100vh-80px)] overflow-y-auto no-scrollbar pr-2">
+            <!-- LEFT PANEL -->
+            <section class="lg:col-span-4 space-y-4 h-[calc(100vh-100px)] overflow-y-auto no-scrollbar pr-2">
                 
-                <!-- Tabs -->
-                <div class="flex p-1 bg-slate-200 rounded-xl">
-                    <button onclick="switchTab('template')" id="tab-template" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white shadow-sm text-slate-900 transition">Template</button>
-                    <button onclick="switchTab('customize')" id="tab-customize" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1">
-                        Kustomisasi <i data-lucide="lock" class="w-3 h-3" id="lock-icon-customize"></i>
+                <!-- TABS NAVIGATION -->
+                <div class="flex p-1 bg-slate-200 rounded-xl sticky top-0 z-10">
+                    <button onclick="switchTab('template')" id="tab-template" class="tab-btn flex-1 py-2 text-xs font-semibold rounded-lg bg-white shadow-sm text-slate-900 transition">Template</button>
+                    <button onclick="switchTab('customize')" id="tab-customize" class="tab-btn flex-1 py-2 text-xs font-semibold rounded-lg text-slate-600 transition flex items-center justify-center gap-1">
+                        Kustom <i data-lucide="lock" class="w-3 h-3" id="lock-icon"></i>
                     </button>
+                    <button onclick="switchTab('detail')" id="tab-detail" class="tab-btn flex-1 py-2 text-xs font-semibold rounded-lg text-slate-600 transition">Detail</button>
                 </div>
 
-                <!-- TAB: TEMPLATE -->
-                <div id="panel-template" class="space-y-4">
-                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-                        <h3 class="font-bold text-slate-900 mb-4">Pilih Template Dasar</h3>
-                        <div class="grid grid-cols-1 gap-3">
-                            <button onclick="applyTemplate('classic')" class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition text-left group">
-                                <div class="w-12 h-12 rounded-lg bg-emerald-100 border border-emerald-200"></div>
-                                <div>
-                                    <div class="font-semibold text-slate-900 group-hover:text-brand-600">Royal Emerald</div>
-                                    <div class="text-xs text-slate-500">Klasik, Elegan, Formal</div>
-                                </div>
-                            </button>
-                            <button onclick="applyTemplate('modern')" class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition text-left group">
-                                <div class="w-12 h-12 rounded-lg bg-amber-100 border border-amber-200"></div>
-                                <div>
-                                    <div class="font-semibold text-slate-900 group-hover:text-brand-600">Minimalist Cream</div>
-                                    <div class="text-xs text-slate-500">Modern, Hangat, Bersih</div>
-                                </div>
-                            </button>
-                            <button onclick="applyTemplate('floral')" class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition text-left group relative overflow-hidden">
-                                <div class="absolute top-2 right-2 bg-gold-500 text-slate-900 text-[9px] font-bold px-1.5 py-0.5 rounded">PRO</div>
-                                <div class="w-12 h-12 rounded-lg bg-rose-100 border border-rose-200"></div>
-                                <div>
-                                    <div class="font-semibold text-slate-900 group-hover:text-brand-600">Romantic Floral</div>
-                                    <div class="text-xs text-slate-500">Manis, Bunga, Script Font</div>
-                                </div>
-                            </button>
+                <!-- PANEL: TEMPLATE (100 Templates) -->
+                <div id="panel-template" class="space-y-3">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-slate-900 text-sm">100+ Template</h3>
+                            <span class="text-xs text-slate-500"><span id="freeCount">20</span> Gratis</span>
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-3">
+                            <button onclick="filterCategory('all')" class="category-pill active whitespace-nowrap text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-semibold">Semua</button>
+                            <button onclick="filterCategory('classic')" class="category-pill whitespace-nowrap text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-semibold">Klasik</button>
+                            <button onclick="filterCategory('modern')" class="category-pill whitespace-nowrap text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-semibold">Modern</button>
+                            <button onclick="filterCategory('floral')" class="category-pill whitespace-nowrap text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-semibold">Floral</button>
+                            <button onclick="filterCategory('elegant')" class="category-pill whitespace-nowrap text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-semibold">Elegan</button>
+                            <button onclick="filterCategory('rustic')" class="category-pill whitespace-nowrap text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-semibold">Rustic</button>
+                        </div>
+
+                        <!-- Template Grid -->
+                        <div id="templateGrid" class="grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto no-scrollbar pr-1">
+                            <!-- Templates akan di-generate oleh JavaScript -->
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB: CUSTOMIZE (CANVA-LIKE) -->
-                <div id="panel-customize" class="space-y-4 relative">
-                    <!-- PRO LOCK OVERLAY -->
+                <!-- PANEL: CUSTOMIZE (PRO) -->
+                <div id="panel-customize" class="hidden space-y-3 relative">
                     <div id="customizeLock" class="pro-lock-overlay">
                         <div class="bg-white p-4 rounded-full shadow-lg mb-3">
                             <i data-lucide="lock" class="w-8 h-8 text-slate-400"></i>
                         </div>
                         <h4 class="font-bold text-slate-900">Fitur Premium</h4>
-                        <p class="text-xs text-slate-500 text-center px-6 mb-4">Buka kustomisasi warna, border, font, dan gambar layaknya Canva.</p>
-                        <button onclick="togglePricingModal()" class="bg-slate-900 text-white text-sm font-semibold px-6 py-2 rounded-lg hover:bg-slate-800 transition">Upgrade Sekarang</button>
+                        <p class="text-xs text-slate-500 text-center px-6 mb-4">Ubah warna, border, font, dan background layaknya Canva.</p>
+                        <button onclick="togglePricingModal()" class="bg-slate-900 text-white text-sm font-semibold px-6 py-2 rounded-lg">Upgrade Sekarang</button>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-5">
-                        <h3 class="font-bold text-slate-900 flex items-center gap-2">
-                            <i data-lucide="palette" class="w-4 h-4 text-brand-600"></i> Kustomisasi Desain
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-4">
+                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <i data-lucide="palette" class="w-4 h-4 text-brand-600"></i> Kustomisasi
                         </h3>
 
-                        <!-- Background -->
                         <div>
                             <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Latar Belakang</label>
-                            <div class="grid grid-cols-4 gap-2 mb-2">
-                                <button onclick="updateDesign('bgType', 'color')" class="h-10 rounded-lg bg-slate-100 border border-slate-300 flex items-center justify-center hover:border-brand-500"><i data-lucide="paint-bucket" class="w-4 h-4 text-slate-600"></i></button>
-                                <button onclick="updateDesign('bgType', 'image')" class="h-10 rounded-lg bg-slate-100 border border-slate-300 flex items-center justify-center hover:border-brand-500"><i data-lucide="image" class="w-4 h-4 text-slate-600"></i></button>
+                            <div class="grid grid-cols-2 gap-2 mb-2">
+                                <button onclick="updateDesign('bgType', 'color')" id="btn-bg-color" class="h-10 rounded-lg bg-white border-2 border-brand-500 flex items-center justify-center gap-1 text-xs font-semibold">
+                                    <i data-lucide="paint-bucket" class="w-3 h-3"></i> Warna
+                                </button>
+                                <button onclick="updateDesign('bgType', 'image')" id="btn-bg-image" class="h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center gap-1 text-xs font-semibold">
+                                    <i data-lucide="image" class="w-3 h-3"></i> Gambar
+                                </button>
                             </div>
-                            <div id="bgColorControl" class="flex items-center gap-2">
-                                <input type="color" id="inputBgColor" value="#ffffff" onchange="updateDesign('bgColor', this.value)" class="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer">
-                                <span class="text-xs text-slate-500">Pilih Warna</span>
+                            <div id="bgColorControl">
+                                <input type="color" id="inputBgColor" value="#ffffff" onchange="updateDesign('bgColor', this.value)" class="w-full h-10 rounded-lg border border-slate-200 cursor-pointer">
                             </div>
                             <div id="bgImageControl" class="hidden space-y-2">
                                 <select onchange="updateDesign('bgImage', this.value)" class="w-full text-xs p-2 rounded-lg border border-slate-200 bg-slate-50">
                                     <option value="">-- Pilih Gambar --</option>
                                     <option value="https://images.unsplash.com/photo-1522673607200-1645062cd958?auto=format&fit=crop&w=600">Floral Soft</option>
                                     <option value="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600">Wedding Ring</option>
-                                    <option value="custom">Upload URL Sendiri...</option>
+                                    <option value="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600">Elegant Dark</option>
+                                    <option value="custom">URL Sendiri...</option>
                                 </select>
-                                <input type="text" id="customBgUrl" placeholder="Tempel URL Gambar..." class="hidden w-full text-xs p-2 rounded-lg border border-slate-200" oninput="updateDesign('bgImage', this.value)">
+                                <input type="text" id="customBgUrl" placeholder="Tempel URL..." class="hidden w-full text-xs p-2 rounded-lg border border-slate-200" oninput="updateDesign('bgImage', this.value)">
                             </div>
                         </div>
 
-                        <!-- Border Style -->
                         <div>
-                            <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Gaya Border</label>
+                            <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Border</label>
                             <select onchange="updateDesign('borderStyle', this.value)" class="w-full text-sm p-2.5 rounded-lg border border-slate-200 bg-slate-50">
                                 <option value="none">Tanpa Border</option>
-                                <option value="solid">Solid Elegan</option>
-                                <option value="double">Double Line (Klasik)</option>
-                                <option value="dashed">Dashed (Minimalis)</option>
+                                <option value="solid">Solid</option>
+                                <option value="double">Double Line</option>
+                                <option value="dashed">Dashed</option>
                             </select>
                         </div>
 
-                        <!-- Typography -->
                         <div>
                             <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Font Nama</label>
                             <select onchange="updateDesign('fontFamily', this.value)" class="w-full text-sm p-2.5 rounded-lg border border-slate-200 bg-slate-50">
-                                <option value="font-serif">Playfair Display (Elegan)</option>
-                                <option value="font-script">Great Vibes (Sambungan)</option>
+                                <option value="font-serif">Playfair (Elegan)</option>
+                                <option value="font-script">Great Vibes (Script)</option>
+                                <option value="font-dancing">Dancing Script</option>
+                                <option value="font-garamond">Cormorant (Classic)</option>
+                                <option value="font-cinzel">Cinzel (Royal)</option>
                                 <option value="font-sans">Jakarta Sans (Modern)</option>
                             </select>
                         </div>
 
-                        <!-- Primary Color -->
                         <div>
                             <label class="text-xs font-semibold text-slate-600 uppercase mb-2 block">Warna Aksen</label>
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-2">
                                 <input type="color" id="inputAccentColor" value="#059669" onchange="updateDesign('accentColor', this.value)" class="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer">
-                                <div class="flex gap-2">
+                                <div class="flex gap-1 flex-wrap">
                                     <button onclick="updateDesign('accentColor', '#059669')" class="w-6 h-6 rounded-full bg-emerald-600 border border-slate-200"></button>
                                     <button onclick="updateDesign('accentColor', '#d97706')" class="w-6 h-6 rounded-full bg-amber-600 border border-slate-200"></button>
                                     <button onclick="updateDesign('accentColor', '#be185d')" class="w-6 h-6 rounded-full bg-pink-700 border border-slate-200"></button>
+                                    <button onclick="updateDesign('accentColor', '#7c3aed')" class="w-6 h-6 rounded-full bg-violet-600 border border-slate-200"></button>
                                     <button onclick="updateDesign('accentColor', '#0f172a')" class="w-6 h-6 rounded-full bg-slate-900 border border-slate-200"></button>
                                 </div>
                             </div>
@@ -220,15 +221,14 @@
                     </div>
                 </div>
 
-                <!-- TAB: CONTENT (Always Available) -->
-                <div id="panel-content" class="hidden space-y-4">
-                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
-                        <h3 class="font-bold text-slate-900">Detail Teks</h3>
-                        <p class="text-xs text-slate-500">Tips: Pengguna Pro bisa klik teks langsung di preview untuk mengedit!</p>
+                <!-- PANEL: DETAIL -->
+                <div id="panel-detail" class="hidden space-y-3">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-slate-900 text-sm">Detail Teks</h3>
                         
                         <div>
                             <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Nama Mempelai</label>
-                            <input type="text" id="inputNames" value="Rania & Fikri" oninput="syncText('previewNames', this.value); syncText('viewerNamesCover', this.value); syncText('viewerNamesMain', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            <input type="text" id="inputNames" value="Rania & Fikri" oninput="syncText('names', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Tanggal</label>
@@ -236,18 +236,18 @@
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Lokasi</label>
-                            <input type="text" id="inputLocation" value="Grand Ballroom, Jakarta" oninput="syncText('previewLocation', this.value); syncText('viewerLocation', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            <input type="text" id="inputLocation" value="Grand Ballroom, Jakarta" oninput="syncText('location', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-slate-600 uppercase mb-1 block">Kata-kata Undangan</label>
-                            <textarea id="inputStory" rows="4" oninput="syncText('previewStory', this.value); syncText('viewerStory', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">"Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami..."</textarea>
+                            <textarea id="inputStory" rows="4" oninput="syncText('story', this.value)" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none">"Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami..."</textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- PUBLISH ACTION -->
-                <div class="bg-gradient-to-br from-brand-50 to-white rounded-2xl p-5 border border-brand-100 sticky bottom-0">
-                    <button onclick="publishInvitation()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 mb-3">
+                <!-- PUBLISH -->
+                <div class="bg-gradient-to-br from-brand-50 to-white rounded-2xl p-4 border border-brand-100 sticky bottom-0">
+                    <button onclick="publishInvitation()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 mb-2">
                         <i data-lucide="rocket" class="w-5 h-5"></i> Publish & Dapatkan Link
                     </button>
                     <div class="flex gap-2">
@@ -259,23 +259,20 @@
                 </div>
             </section>
 
-            <!-- RIGHT PANEL: LIVE PREVIEW (CANVAS) -->
+            <!-- RIGHT PANEL: PREVIEW -->
             <section class="lg:col-span-8 flex flex-col items-center pt-4">
                 <div class="text-center mb-4">
                     <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-widest">Live Preview</h3>
-                    <p class="text-xs text-slate-400">Klik teks untuk mengedit (Khusus Pro)</p>
+                    <p class="text-xs text-slate-400">Klik teks untuk edit langsung (Pro)</p>
                 </div>
                 
                 <div class="phone-mockup w-[320px] h-[640px] bg-white relative">
-                    <div id="previewCanvas" class="w-full h-full overflow-y-auto no-scrollbar relative transition-all duration-300" 
-                         style="background-color: #ffffff; border: 0px solid #000;">
+                    <div id="previewCanvas" class="w-full h-full overflow-y-auto no-scrollbar relative transition-all duration-300" style="background-color: #ffffff;">
                         
-                        <!-- Watermark for Free -->
                         <div id="watermark" class="absolute bottom-4 left-0 right-0 text-center z-30 pointer-events-none">
                             <span class="text-[10px] text-slate-400 font-medium bg-white/80 px-2 py-1 rounded-full backdrop-blur-sm">Dibuat dengan InvitaAI Free</span>
                         </div>
 
-                        <!-- Editable Content -->
                         <div class="min-h-full flex flex-col">
                             <div class="h-2/5 flex flex-col items-center justify-center p-6 text-center relative">
                                 <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold mb-3">The Wedding Of</p>
@@ -306,7 +303,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- MODE 2: INVITATION VIEWER                  -->
+    <!-- MODE 2: VIEWER                             -->
     <!-- ========================================== -->
     <div id="viewerMode" class="hidden min-h-screen bg-slate-900 text-white">
         <div id="coverScreen" class="fixed inset-0 z-50 viewer-cover flex flex-col items-center justify-center text-center p-6 transition-transform duration-1000">
@@ -318,7 +315,7 @@
         </div>
 
         <div id="mainContent" class="opacity-0 transition-opacity duration-1000" style="background-color: #ffffff; color: #0f172a;">
-            <div class="min-h-screen flex flex-col items-center justify-center p-8 text-center relative" id="viewerHeroBg">
+            <div class="min-h-screen flex flex-col items-center justify-center p-8 text-center" id="viewerHeroBg">
                 <p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-4">We Are Getting Married</p>
                 <h1 id="viewerNamesMain" class="text-5xl md:text-6xl font-serif font-bold mb-6">Rania & Fikri</h1>
                 <div class="w-24 h-1 rounded-full mb-8" id="viewerLine"></div>
@@ -339,7 +336,7 @@
 
             <footer class="bg-slate-900 text-slate-400 py-8 text-center text-xs">
                 <p class="mb-2">Made with ❤️ by <span class="text-white font-semibold">InvitaAI Studio</span></p>
-                <button onclick="window.location.href = window.location.pathname" class="text-brand-400 hover:text-brand-300 underline">Buat Undangan Anda Sendiri</button>
+                <button onclick="window.location.href = window.location.pathname" class="text-brand-400 hover:text-brand-300 underline">Buat Undangan Anda</button>
             </footer>
         </div>
     </div>
@@ -351,27 +348,27 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
                 <div class="p-8 text-center border-b border-slate-100 bg-slate-50">
                     <h2 class="text-2xl font-bold text-slate-900">Upgrade ke Premium</h2>
-                    <p class="text-slate-500 mt-2">Buka fitur editor layaknya Canva untuk undangan yang unik.</p>
+                    <p class="text-slate-500 mt-2">Buka 80+ template eksklusif & editor Canva-like</p>
                 </div>
                 <div class="grid md:grid-cols-2">
                     <div class="p-8 border-r border-slate-100">
                         <h3 class="text-lg font-bold text-slate-900">Gratis</h3>
                         <div class="my-4 text-3xl font-bold">Rp0</div>
                         <ul class="space-y-3 mb-8 text-sm text-slate-600">
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> 1 Template Dasar</li>
-                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Tidak bisa ubah warna/border</li>
-                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Watermark "InvitaAI Free"</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> 20 Template Dasar</li>
+                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Tidak bisa kustomisasi</li>
+                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Watermark</li>
                         </ul>
                         <button onclick="togglePricingModal()" class="w-full py-2.5 rounded-xl border border-slate-200 font-semibold">Paket Saat Ini</button>
                     </div>
                     <div class="p-8 bg-slate-900 text-white relative">
                         <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gold-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full">TERLARIS</div>
-                        <h3 class="text-lg font-bold text-gold-400">Premium Creator</h3>
+                        <h3 class="text-lg font-bold text-gold-400">Premium</h3>
                         <div class="my-4 text-3xl font-bold">Rp49.000</div>
                         <ul class="space-y-3 mb-8 text-sm text-slate-200">
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Canva-like Editor:</b> Ubah warna, border, font</li>
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Direct Edit:</b> Klik teks langsung di preview</li>
-                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Custom Background:</b> Upload gambar sendiri</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>100+ Template</b> (80 PRO)</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Canva Editor:</b> warna, border, font</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> <b>Direct Edit</b> di canvas</li>
                             <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Tanpa Watermark</li>
                         </ul>
                         <button onclick="simulateCheckout()" class="w-full py-2.5 rounded-xl bg-gold-500 text-slate-900 font-bold hover:bg-gold-400 transition">Beli Sekarang</button>
@@ -390,28 +387,81 @@
     <script>
         lucide.createIcons();
 
-        // --- 1. STATE MANAGEMENT ---
+        // ==========================================
+        // 1. GENERATE 100 TEMPLATES DINAMIS
+        // ==========================================
+        const colorPalettes = [
+            { name: 'Emerald', bg: '#ffffff', accent: '#059669', category: 'classic' },
+            { name: 'Rose', bg: '#fff1f2', accent: '#be185d', category: 'floral' },
+            { name: 'Gold', bg: '#fffbeb', accent: '#d97706', category: 'elegant' },
+            { name: 'Sapphire', bg: '#eff6ff', accent: '#1d4ed8', category: 'classic' },
+            { name: 'Amethyst', bg: '#faf5ff', accent: '#7c3aed', category: 'elegant' },
+            { name: 'Charcoal', bg: '#1e293b', accent: '#fbbf24', category: 'modern' },
+            { name: 'Ivory', bg: '#fefce8', accent: '#78716c', category: 'rustic' },
+            { name: 'Blush', bg: '#fdf2f8', accent: '#db2777', category: 'floral' },
+            { name: 'Sage', bg: '#f0fdf4', accent: '#15803d', category: 'rustic' },
+            { name: 'Midnight', bg: '#0f172a', accent: '#e2e8f0', category: 'modern' }
+        ];
+
+        const fontStyles = [
+            { name: 'Playfair', family: 'font-serif' },
+            { name: 'Great Vibes', family: 'font-script' },
+            { name: 'Dancing', family: 'font-dancing' },
+            { name: 'Cormorant', family: 'font-garamond' },
+            { name: 'Cinzel', family: 'font-cinzel' }
+        ];
+
+        const borderStyles = ['none', 'solid', 'double', 'dashed'];
+
+        const adjectives = ['Royal', 'Elegant', 'Modern', 'Classic', 'Romantic', 'Vintage', 'Rustic', 'Dreamy', 'Ethereal', 'Majestic', 'Graceful', 'Timeless', 'Charming', 'Luxurious', 'Divine', 'Serene', 'Enchanted', 'Regal', 'Opulent', 'Pure'];
+
+        let templates = [];
+        let templateId = 0;
+
+        // Generate 100 templates
+        for (let i = 0; i < 100; i++) {
+            const palette = colorPalettes[i % colorPalettes.length];
+            const font = fontStyles[i % fontStyles.length];
+            const border = borderStyles[i % borderStyles.length];
+            const adj = adjectives[Math.floor(i / 5) % adjectives.length];
+            
+            const isPro = i >= 20; // 20 gratis, 80 PRO
+            
+            templates.push({
+                id: templateId++,
+                name: `${adj} ${palette.name}`,
+                category: palette.category,
+                isPro: isPro,
+                design: {
+                    bgType: 'color',
+                    bgColor: palette.bg,
+                    bgImage: '',
+                    borderStyle: border,
+                    fontFamily: font.family,
+                    accentColor: palette.accent
+                }
+            });
+        }
+
+        // ==========================================
+        // 2. STATE MANAGEMENT
+        // ==========================================
         const urlParams = new URLSearchParams(window.location.search);
         const viewData = urlParams.get('view');
 
-        // Default State
         let state = {
             isPro: false,
             names: "Rania & Fikri",
             date: "2026-10-15",
             location: "Grand Ballroom, Jakarta",
             story: "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami...",
-            design: {
-                bgType: 'color', // 'color' or 'image'
-                bgColor: '#ffffff',
-                bgImage: '',
-                borderStyle: 'none',
-                fontFamily: 'font-serif',
-                accentColor: '#059669'
-            }
+            selectedTemplate: 0,
+            design: templates[0].design
         };
 
-        // --- 2. ROUTING ---
+        // ==========================================
+        // 3. ROUTING
+        // ==========================================
         if (viewData) {
             document.getElementById('editorMode').classList.add('hidden');
             document.getElementById('viewerMode').classList.remove('hidden');
@@ -419,9 +469,8 @@
             
             try {
                 const parsed = JSON.parse(atob(viewData));
-                state = { ...state, ...parsed }; // Merge saved state
+                state = { ...state, ...parsed };
                 
-                // Apply to Viewer DOM
                 document.getElementById('viewerNamesCover').innerText = state.names;
                 document.getElementById('viewerNamesMain').innerText = state.names;
                 document.getElementById('viewerNamesMain').className = `text-5xl md:text-6xl font-bold mb-6 ${state.design.fontFamily}`;
@@ -431,38 +480,129 @@
                 const dateObj = new Date(state.date);
                 document.getElementById('viewerDate').innerText = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-                // Apply Viewer Design
                 const mainContent = document.getElementById('mainContent');
-                const heroBg = document.getElementById('viewerHeroBg');
-                
                 if (state.design.bgType === 'image' && state.design.bgImage) {
                     mainContent.style.backgroundImage = `url(${state.design.bgImage})`;
                     mainContent.style.backgroundSize = 'cover';
-                    mainContent.style.backgroundPosition = 'center';
                 } else {
                     mainContent.style.backgroundColor = state.design.bgColor;
                 }
 
-                // Border logic for viewer card
-                const card = document.querySelector('#mainContent .max-w-md');
-                if(state.design.borderStyle === 'double') card.classList.add('border-4', 'border-double');
-                else if(state.design.borderStyle === 'dashed') card.classList.add('border-2', 'border-dashed');
-                else if(state.design.borderStyle === 'solid') card.classList.add('border-4', 'border-solid');
-                
                 document.getElementById('viewerLine').style.backgroundColor = state.design.accentColor;
-
             } catch (e) {
-                console.error("Invalid invite data", e);
+                console.error("Invalid data", e);
             }
         } else {
             document.getElementById('editorMode').classList.remove('hidden');
             document.getElementById('editorMode').classList.add('flex');
+            renderTemplates();
             renderEditor();
         }
 
-        // --- 3. EDITOR LOGIC ---
+        // ==========================================
+        // 4. RENDER 100 TEMPLATES
+        // ==========================================
+        function renderTemplates(category = 'all') {
+            const grid = document.getElementById('templateGrid');
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' ? templates : templates.filter(t => t.category === category);
+
+            filtered.forEach((tpl, idx) => {
+                const card = document.createElement('button');
+                card.className = `template-card rounded-xl border border-slate-200 overflow-hidden text-left ${state.selectedTemplate === tpl.id ? 'active' : ''}`;
+                card.onclick = () => applyTemplate(tpl.id);
+
+                card.innerHTML = `
+                    <div class="h-20 relative" style="background-color: ${tpl.design.bgColor};">
+                        ${tpl.isPro ? '<div class="absolute top-1 right-1 bg-gold-500 text-slate-900 text-[8px] font-bold px-1.5 py-0.5 rounded">PRO</div>' : ''}
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-8 h-0.5 rounded mx-auto mb-1" style="background-color: ${tpl.design.accentColor};"></div>
+                                <div class="text-[8px] font-bold" style="color: ${tpl.design.accentColor}; font-family: ${getFontName(tpl.design.fontFamily)};">A&B</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-2 bg-white">
+                        <div class="text-[10px] font-semibold text-slate-900 truncate">${tpl.name}</div>
+                        <div class="text-[8px] text-slate-500 capitalize">${tpl.category}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function getFontName(family) {
+            const map = {
+                'font-serif': '"Playfair Display"',
+                'font-script': '"Great Vibes"',
+                'font-dancing': '"Dancing Script"',
+                'font-garamond': '"Cormorant Garamond"',
+                'font-cinzel': '"Cinzel"',
+                'font-sans': '"Plus Jakarta Sans"'
+            };
+            return map[family] || '"Plus Jakarta Sans"';
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            event.target.classList.add('active');
+            renderTemplates(cat);
+        }
+
+        // ==========================================
+        // 5. APPLY TEMPLATE
+        // ==========================================
+        function applyTemplate(id) {
+            const tpl = templates.find(t => t.id === id);
+            if (!tpl) return;
+
+            if (tpl.isPro && !state.isPro) {
+                showToast('🔒 Template ini khusus Premium!', 'error');
+                togglePricingModal();
+                return;
+            }
+
+            state.selectedTemplate = id;
+            state.design = { ...tpl.design };
+            
+            // Update UI inputs
+            document.getElementById('inputBgColor').value = tpl.design.bgColor;
+            document.getElementById('inputAccentColor').value = tpl.design.accentColor;
+            
+            applyDesignToPreview();
+            renderTemplates(); // Re-render to show active state
+            showToast(`✅ Template "${tpl.name}" diterapkan!`);
+        }
+
+        // ==========================================
+        // 6. TAB SWITCHING (FIXED)
+        // ==========================================
+        function switchTab(tabName) {
+            // Hide all panels
+            document.getElementById('panel-template').classList.add('hidden');
+            document.getElementById('panel-customize').classList.add('hidden');
+            document.getElementById('panel-detail').classList.add('hidden');
+
+            // Reset all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+                btn.classList.add('text-slate-600');
+            });
+
+            // Show selected panel
+            document.getElementById(`panel-${tabName}`).classList.remove('hidden');
+
+            // Activate selected tab
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+            activeBtn.classList.remove('text-slate-600');
+        }
+
+        // ==========================================
+        // 7. EDITOR LOGIC
+        // ==========================================
         function renderEditor() {
-            // Sync inputs with state
             document.getElementById('inputNames').value = state.names;
             document.getElementById('inputDate').value = state.date;
             document.getElementById('inputLocation').value = state.location;
@@ -473,12 +613,15 @@
             updateProUI();
         }
 
-        function syncText(elementId, value) {
-            document.getElementById(elementId).innerText = value;
-            // Update state
-            if(elementId === 'previewNames') state.names = value;
-            if(elementId === 'previewStory') state.story = value;
-            if(elementId === 'previewLocation') state.location = value;
+        function syncText(key, value) {
+            state[key] = value;
+            if (key === 'names') {
+                document.getElementById('previewNames').innerText = value;
+            } else if (key === 'story') {
+                document.getElementById('previewStory').innerText = value;
+            } else if (key === 'location') {
+                document.getElementById('previewLocation').innerText = value;
+            }
         }
 
         function updateDateDisplay(dateVal) {
@@ -488,9 +631,11 @@
             document.getElementById('previewDate').innerText = formatted;
         }
 
-        // --- 4. CANVA-LIKE CUSTOMIZATION ---
+        // ==========================================
+        // 8. CUSTOMIZE (PRO)
+        // ==========================================
         function updateDesign(key, value) {
-            if (!state.isPro && key !== 'bgType') {
+            if (!state.isPro) {
                 togglePricingModal();
                 return;
             }
@@ -499,12 +644,13 @@
                 state.design.bgType = value;
                 document.getElementById('bgColorControl').classList.toggle('hidden', value !== 'color');
                 document.getElementById('bgImageControl').classList.toggle('hidden', value !== 'image');
-                if (value === 'image' && document.getElementById('customBgUrl').value) {
-                    state.design.bgImage = document.getElementById('customBgUrl').value;
-                }
+                document.getElementById('btn-bg-color').classList.toggle('border-brand-500', value === 'color');
+                document.getElementById('btn-bg-color').classList.toggle('border-slate-200', value !== 'color');
+                document.getElementById('btn-bg-image').classList.toggle('border-brand-500', value === 'image');
+                document.getElementById('btn-bg-image').classList.toggle('border-slate-200', value !== 'image');
             } else if (key === 'bgImage' && value === 'custom') {
                 document.getElementById('customBgUrl').classList.remove('hidden');
-                return; // Wait for input
+                return;
             } else {
                 state.design[key] = value;
             }
@@ -522,7 +668,6 @@
             if (state.design.bgType === 'image' && state.design.bgImage) {
                 canvas.style.backgroundImage = `url(${state.design.bgImage})`;
                 canvas.style.backgroundSize = 'cover';
-                canvas.style.backgroundPosition = 'center';
                 canvas.style.backgroundColor = 'transparent';
             } else {
                 canvas.style.backgroundImage = 'none';
@@ -530,7 +675,7 @@
             }
 
             // Border
-            canvas.style.border = '0px'; // reset
+            canvas.style.border = '0px';
             canvas.classList.remove('border-4', 'border-double', 'border-2', 'border-dashed', 'border-solid', 'border-slate-300');
             if (state.design.borderStyle === 'double') canvas.classList.add('border-4', 'border-double', 'border-slate-300');
             if (state.design.borderStyle === 'dashed') canvas.classList.add('border-2', 'border-dashed', 'border-slate-300');
@@ -538,16 +683,15 @@
 
             // Typography & Accent
             names.className = `text-3xl font-bold leading-tight mb-2 editable-pro ${state.design.fontFamily}`;
-            names.style.color = state.design.accentColor; // Optional: make name accent color
             line.style.backgroundColor = state.design.accentColor;
             btn.style.backgroundColor = state.design.accentColor;
         }
 
-        // Direct Edit (ContentEditable) for Pro
+        // Direct Edit
         document.querySelectorAll('.editable-pro').forEach(el => {
             el.addEventListener('click', function() {
                 if (!state.isPro) {
-                    showToast('🔒 Upgrade Pro untuk edit teks langsung di canvas!', 'error');
+                    showToast('🔒 Upgrade Pro untuk edit langsung!', 'error');
                     togglePricingModal();
                     return;
                 }
@@ -557,7 +701,6 @@
             
             el.addEventListener('blur', function() {
                 this.contentEditable = false;
-                // Sync back to state and inputs
                 if (this.id === 'previewNames') {
                     state.names = this.innerText;
                     document.getElementById('inputNames').value = this.innerText;
@@ -569,39 +712,13 @@
             });
         });
 
-        // --- 5. TEMPLATES ---
-        function applyTemplate(type) {
-            if (type === 'floral' && !state.isPro) {
-                showToast('🔒 Template Floral khusus Premium!', 'error');
-                togglePricingModal();
-                return;
-            }
-
-            if (type === 'classic') {
-                updateDesign('bgColor', '#ffffff');
-                updateDesign('accentColor', '#059669');
-                updateDesign('fontFamily', 'font-serif');
-                updateDesign('borderStyle', 'none');
-            } else if (type === 'modern') {
-                updateDesign('bgColor', '#fffbeb'); // amber-50
-                updateDesign('accentColor', '#d97706');
-                updateDesign('fontFamily', 'font-sans');
-                updateDesign('borderStyle', 'solid');
-            } else if (type === 'floral') {
-                updateDesign('bgType', 'image');
-                updateDesign('bgImage', 'https://images.unsplash.com/photo-1522673607200-1645062cd958?auto=format&fit=crop&w=600');
-                updateDesign('accentColor', '#be185d');
-                updateDesign('fontFamily', 'font-script');
-                updateDesign('borderStyle', 'double');
-            }
-            showToast('✅ Template diterapkan!');
-        }
-
-        // --- 6. FREEMIUM & PUBLISH ---
+        // ==========================================
+        // 9. PRO UI
+        // ==========================================
         function updateProUI() {
             const badge = document.getElementById('userBadge');
             const lock = document.getElementById('customizeLock');
-            const lockIcon = document.getElementById('lock-icon-customize');
+            const lockIcon = document.getElementById('lock-icon');
             const watermark = document.getElementById('watermark');
 
             if (state.isPro) {
@@ -610,11 +727,6 @@
                 lock.classList.add('hidden');
                 lockIcon.classList.add('hidden');
                 watermark.classList.add('hidden');
-                
-                // Enable contenteditable hints
-                document.querySelectorAll('.editable-pro').forEach(el => {
-                    el.setAttribute('contenteditable', 'true');
-                });
             } else {
                 badge.innerText = 'FREE';
                 badge.className = 'bg-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase';
@@ -624,52 +736,42 @@
             }
         }
 
+        // ==========================================
+        // 10. PUBLISH
+        // ==========================================
         function publishInvitation() {
-            // Sanitize: remove HTML tags from contenteditable to prevent XSS in URL
-            state.names = document.getElementById('previewNames').innerText;
-            state.story = document.getElementById('previewStory').innerText;
-
             const encoded = btoa(JSON.stringify(state));
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}?view=${encoded}`;
             
             document.getElementById('shareLink').value = shareUrl;
-            showToast('🚀 Undangan dipublish! Link siap disalin.');
+            showToast('🚀 Link siap disalin!');
         }
 
         function copyLink() {
             const link = document.getElementById('shareLink').value;
             if(link.includes('...')) {
-                showToast('⚠️ Publish undangan terlebih dahulu!', 'error');
+                showToast('⚠️ Publish dulu!', 'error');
                 return;
             }
             navigator.clipboard.writeText(link).then(() => showToast('✅ Link disalin!'));
         }
 
-        // --- 7. UTILITIES ---
-        function switchTab(tab) {
-            ['template', 'customize', 'content'].forEach(t => {
-                document.getElementById(`panel-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
-                document.getElementById(`tab-${t}`).classList.add('text-slate-600');
-            });
-            document.getElementById(`panel-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('bg-white', 'shadow-sm', 'text-slate-900');
-            document.getElementById(`tab-${tab}`).classList.remove('text-slate-600');
-        }
-
+        // ==========================================
+        // 11. UTILITIES
+        // ==========================================
         function togglePricingModal() {
             document.getElementById('pricingModal').classList.toggle('hidden');
         }
 
         function simulateCheckout() {
-            showToast('⏳ Memproses pembayaran...');
+            showToast('⏳ Memproses...');
             setTimeout(() => {
                 state.isPro = true;
                 togglePricingModal();
                 updateProUI();
-                showToast('🎉 Selamat! Fitur Canva-like Editor telah terbuka.');
-                switchTab('customize'); // Auto switch to show the unlocked features
+                renderTemplates(); // Re-render to show all templates accessible
+                showToast('🎉 Premium aktif! Semua fitur terbuka.');
             }, 1500);
         }
 
