@@ -1,192 +1,556 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Generator Undangan Digital Dinamis</title>
-    <!-- Tailwind CSS untuk Styling Cepat & Modern -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>InvitaAI Studio | Platform Undangan Digital Premium</title>
+    <meta name="description" content="Buat dan bagikan undangan digital premium dengan link unik, fitur RSVP, dan amplop digital.">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+                    colors: {
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-serif-custom { font-family: 'Playfair Display', serif; }
+        body { background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        .phone-mockup {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 10px #0f172a, 0 0 0 12px #334155;
+            border-radius: 2.5rem; position: relative; overflow: hidden; background: #000;
+        }
+        .phone-mockup::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 40%; height: 24px; background: #0f172a; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 50;
+        }
+        .pro-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #0f172a; font-size: 0.65rem; padding: 2px 8px; border-radius: 9999px; font-weight: 800; letter-spacing: 0.05em;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Viewer Mode Styles */
+        .viewer-cover {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover; background-position: center;
+        }
+        .blur-backdrop { backdrop-filter: blur(10px); background: rgba(255,255,255,0.7); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="text-slate-800 min-h-screen antialiased">
 
-    <!-- Header / Navbar -->
-    <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                ✨ InvitaAI Studio
-            </h1>
-            <span class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">Single-File HTML App</span>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto flex-1 w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- KOLOM KIRI: WORKFLOW & KONTROL (5 Kolom) -->
-        <section class="lg:col-span-5 bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col gap-6">
-            <div>
-                <h2 class="text-lg font-bold text-slate-900 mb-1">Workflow Undangan</h2>
-                <p class="text-sm text-slate-500">Sesuaikan data dan biarkan AI merangkai kata-kata terbaik untuk Anda.</p>
-            </div>
-
-            <!-- Form Input Data -->
-            <div class="space-y-4 flex-1">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Nama Pasangan / Acara</label>
-                    <input type="text" id="inputNames" value="Rania & Fikri" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: Romeo & Juliet">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tanggal Acara</label>
-                        <input type="date" id="inputDate" value="2026-10-15" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+    <!-- ========================================== -->
+    <!-- MODE 1: EDITOR DASHBOARD (Default)         -->
+    <!-- ========================================== -->
+    <div id="editorMode" class="hidden flex-col min-h-screen">
+        <!-- Navbar -->
+        <header class="sticky top-0 z-40 glass-panel border-b border-slate-200/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xl font-bold tracking-tight text-slate-900">Invita<span class="text-brand-600">AI</span></span>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Lokasi</label>
-                        <input type="text" id="inputLocation" value="The Ballroom Hotel, Jakarta" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="hidden md:flex items-center gap-4 text-sm text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
+                            <span class="flex items-center gap-1"><i data-lucide="eye" class="w-4 h-4"></i> <b id="statViews">0</b> Views</span>
+                            <span class="w-px h-4 bg-slate-300"></span>
+                            <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> <b id="statRsvp">0</b> RSVP</span>
+                        </div>
+                        <button onclick="togglePricingModal()" class="bg-gradient-to-r from-slate-900 to-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-lg shadow-slate-900/20 flex items-center gap-2 hover:scale-105 transition">
+                            <i data-lucide="crown" class="w-4 h-4 text-gold-400"></i>
+                            <span>Upgrade Pro</span>
+                        </button>
                     </div>
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Pilih Tema Desain Dinamis</label>
-                    <select id="selectTheme" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white">
-                        <option value="classic">Royal Emerald (Klasik & Elegan)</option>
-                        <option value="minimalist">Minimalist Cream (Modern & Hangat)</option>
-                        <option value="romantic">Rose Sunset (Romantis & Manis)</option>
-                    </select>
-                </div>
-
-                <!-- Tombol Trigger AI -->
-                <button onclick="generateAIContent()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-medium py-3 rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2 text-sm">
-                    <span>⚡ Generate Pesan dengan AI</span>
-                </button>
             </div>
+        </header>
 
-            <div class="border-t border-slate-100 pt-4">
-                <button onclick="exportHTML()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 rounded-xl transition text-sm">
-                    Unduh File Undangan Siap Sebar (.html)
-                </button>
-            </div>
-        </section>
+        <main class="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left: Controls -->
+            <section class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-slate-900 mb-1">Detail Acara</h2>
+                    <p class="text-sm text-slate-500 mb-5">Isi data, AI akan merangkai kata-kata indah secara otomatis.</p>
 
-        <!-- KOLOM KANAN: LIVE PREVIEW UNDANGAN (7 Kolom) -->
-        <section class="lg:col-span-7 bg-slate-100 rounded-2xl p-4 md:p-8 flex items-center justify-center border border-slate-200 relative overflow-hidden">
-            
-            <!-- Kartu Pratinjau Undangan -->
-            <div id="previewCard" class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-500 border border-slate-200 flex flex-col text-center p-8 relative">
-                
-                <!-- Elemen Hiasan Tema -->
-                <div id="themeBadge" class="absolute top-4 right-4 text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full font-semibold">Tema Klasik</div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nama Mempelai</label>
+                            <input type="text" id="inputNames" value="Rania & Fikri" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50 focus:bg-white transition">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Tanggal</label>
+                                <input type="date" id="inputDate" value="2026-10-15" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50 focus:bg-white transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Lokasi</label>
+                                <input type="text" id="inputLocation" value="Grand Ballroom, Jakarta" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50 focus:bg-white transition">
+                            </div>
+                        </div>
 
-                <div class="my-auto py-8 space-y-6">
-                    <p id="previewSubtitle" class="text-xs uppercase tracking-widest text-slate-500 font-medium">The Wedding Of</p>
-                    
-                    <h2 id="previewNames" class="text-3xl md:text-4xl font-serif-custom font-bold text-slate-900">Rania & Fikri</h2>
-                    
-                    <div class="w-12 h-0.5 bg-indigo-500 mx-auto"></div>
-                    
-                    <p id="aiStoryText" class="text-sm text-slate-600 leading-relaxed italic px-4">
-                        "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu..."
-                    </p>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-2">
+                                Tema Undangan <span class="pro-badge">PRO</span>
+                            </label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="selectTheme('classic')" id="btn-classic" class="theme-btn ring-2 ring-brand-500 bg-slate-50 border border-slate-200 rounded-xl p-3 text-center hover:bg-slate-100 transition">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-100 mx-auto mb-2 border border-emerald-200"></div>
+                                    <span class="text-xs font-semibold text-slate-700">Emerald</span>
+                                </button>
+                                <button onclick="selectTheme('minimalist')" id="btn-minimalist" class="theme-btn bg-slate-50 border border-slate-200 rounded-xl p-3 text-center hover:bg-slate-100 transition relative">
+                                    <span class="absolute top-1 right-1 pro-badge text-[8px] px-1.5 py-0.5">PRO</span>
+                                    <div class="w-8 h-8 rounded-full bg-amber-100 mx-auto mb-2 border border-amber-200"></div>
+                                    <span class="text-xs font-semibold text-slate-700">Cream</span>
+                                </button>
+                                <button onclick="selectTheme('midnight')" id="btn-midnight" class="theme-btn bg-slate-50 border border-slate-200 rounded-xl p-3 text-center hover:bg-slate-100 transition relative">
+                                    <span class="absolute top-1 right-1 pro-badge text-[8px] px-1.5 py-0.5">PRO</span>
+                                    <div class="w-8 h-8 rounded-full bg-slate-800 mx-auto mb-2 border border-slate-600"></div>
+                                    <span class="text-xs font-semibold text-slate-700">Midnight</span>
+                                </button>
+                            </div>
+                        </div>
 
-                    <div class="bg-slate-50 rounded-2xl p-4 text-xs space-y-1 border border-slate-100">
-                        <p class="font-semibold text-slate-700" id="previewDateDisplay">Rabu, 15 Oktober 2026</p>
-                        <p class="text-slate-500" id="previewLocationDisplay">The Ballroom Hotel, Jakarta</p>
+                        <button onclick="generateAIContent()" id="btnGenerate" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl shadow-lg shadow-slate-900/20 transition-all duration-200 flex items-center justify-center gap-2 text-sm">
+                            <i data-lucide="wand-2" class="w-4 h-4"></i>
+                            <span>Generate Kata-kata AI</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-slate-100">
-                    <button class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase">
-                        Konfirmasi Kehadiran (RSVP)
+                <!-- Publish Actions -->
+                <div class="bg-gradient-to-br from-brand-50 to-white rounded-2xl p-6 border border-brand-100">
+                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <i data-lucide="link" class="w-5 h-5 text-brand-600"></i> Bagikan Undangan
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-4">Dapatkan link unik untuk dibagikan ke tamu via WhatsApp atau media sosial.</p>
+                    
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="shareLink" readonly value="https://invita.ai/u/..." class="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none">
+                        <button onclick="copyLink()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1">
+                            <i data-lucide="copy" class="w-4 h-4"></i> Salin
+                        </button>
+                    </div>
+                    <button onclick="publishInvitation()" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-gold-500/30 transition flex items-center justify-center gap-2">
+                        <i data-lucide="rocket" class="w-5 h-5"></i>
+                        Publish & Dapatkan Link
                     </button>
                 </div>
+            </section>
+
+            <!-- Right: Live Preview -->
+            <section class="lg:col-span-7 flex flex-col items-center pt-4">
+                <div class="text-center mb-6">
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-widest">Pratinjau Langsung</h3>
+                </div>
+                <div class="phone-mockup w-[300px] h-[600px] bg-white relative">
+                    <div id="previewScreen" class="w-full h-full overflow-y-auto no-scrollbar bg-white relative">
+                        <!-- Preview Content injected by JS -->
+                        <div id="previewHero" class="h-2/5 bg-emerald-50 flex flex-col items-center justify-center p-6 text-center relative transition-colors duration-500">
+                            <span id="previewBadge" class="absolute top-8 right-4 text-[9px] uppercase tracking-widest px-2 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800">Classic</span>
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold mb-3">The Wedding Of</p>
+                            <h2 id="previewNames" class="text-3xl font-serif font-bold text-slate-900 leading-tight mb-2">Rania & Fikri</h2>
+                            <div id="previewLine" class="w-16 h-0.5 bg-emerald-400 mx-auto rounded-full"></div>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <p id="previewStory" class="text-xs text-slate-600 leading-relaxed italic text-center px-2">
+                                "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah kami..."
+                            </p>
+                            <div class="bg-slate-50 rounded-2xl p-4 text-xs space-y-2 border border-slate-100 text-center">
+                                <div class="font-semibold text-slate-700" id="previewDate">Rabu, 15 Oktober 2026</div>
+                                <div class="text-slate-500" id="previewLocation">Grand Ballroom, Jakarta</div>
+                            </div>
+                            <button class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold tracking-widest uppercase">Konfirmasi Kehadiran</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODE 2: INVITATION VIEWER (Saat link dibuka) -->
+    <!-- ========================================== -->
+    <div id="viewerMode" class="hidden min-h-screen bg-slate-900 text-white">
+        <!-- Cover Screen -->
+        <div id="coverScreen" class="fixed inset-0 z-50 viewer-cover flex flex-col items-center justify-center text-center p-6 transition-transform duration-1000">
+            <p class="text-sm uppercase tracking-[0.3em] text-slate-300 mb-4 animate-fade-in-up">The Wedding Of</p>
+            <h1 id="viewerNamesCover" class="text-5xl font-serif font-bold text-white mb-6 animate-fade-in-up" style="animation-delay: 0.2s">Rania & Fikri</h1>
+            <p class="text-slate-300 mb-8 animate-fade-in-up" style="animation-delay: 0.4s">Kepada Yth.<br><span class="text-white font-semibold text-lg">Bapak/Ibu/Saudara/i</span></p>
+            <button onclick="openInvitation()" class="animate-fade-in-up bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-sm tracking-wider hover:bg-gold-400 hover:scale-105 transition duration-300 flex items-center gap-2" style="animation-delay: 0.6s">
+                <i data-lucide="mail-open" class="w-4 h-4"></i> Buka Undangan
+            </button>
+        </div>
+
+        <!-- Main Invitation Content -->
+        <div id="mainContent" class="opacity-0 transition-opacity duration-1000">
+            <!-- Hero -->
+            <div id="viewerHero" class="min-h-screen bg-emerald-50 text-slate-900 flex flex-col items-center justify-center p-8 text-center relative">
+                <p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-4">We Are Getting Married</p>
+                <h1 id="viewerNamesMain" class="text-5xl md:text-6xl font-serif font-bold mb-6">Rania & Fikri</h1>
+                <div class="w-24 h-1 bg-emerald-400 rounded-full mb-8"></div>
+                <p id="viewerStory" class="max-w-md text-sm md:text-base text-slate-600 leading-relaxed italic mb-8">
+                    "Dengan memohon rahmat dan ridho Allah SWT..."
+                </p>
+                <div class="text-2xl font-bold text-slate-800" id="viewerDate">15.10.2026</div>
             </div>
 
-        </section>
+            <!-- Details -->
+            <div class="bg-white py-16 px-6 text-center">
+                <h2 class="text-3xl font-serif font-bold text-slate-900 mb-8">Rangkaian Acara</h2>
+                <div class="max-w-md mx-auto bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 mb-1">Akad Nikah</h3>
+                        <p class="text-slate-600 text-sm">08:00 - 10:00 WIB</p>
+                    </div>
+                    <div class="w-full h-px bg-slate-200"></div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 mb-1">Resepsi</h3>
+                        <p class="text-slate-600 text-sm" id="viewerLocation">Grand Ballroom, Jakarta</p>
+                    </div>
+                    <a href="#" class="inline-flex items-center gap-2 text-brand-600 font-semibold text-sm mt-4 hover:underline">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i> Lihat Lokasi di Google Maps
+                    </a>
+                </div>
+            </div>
 
-    </main>
+            <!-- Amplop Digital (Fitur Cuan!) -->
+            <div class="bg-slate-50 py-16 px-6 text-center border-t border-slate-200">
+                <h2 class="text-2xl font-serif font-bold text-slate-900 mb-2">Amplop Digital</h2>
+                <p class="text-sm text-slate-500 mb-8">Doa restu Anda merupakan karunia yang sangat berarti bagi kami.</p>
+                
+                <div class="max-w-sm mx-auto bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-left space-y-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs">BCA</div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase">Bank BCA</p>
+                            <p class="text-lg font-bold text-slate-900">1234 5678 90</p>
+                            <p class="text-sm text-slate-600">a.n. Rania Putri</p>
+                        </div>
+                        <button onclick="copyToClipboard('1234567890')" class="ml-auto text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg font-semibold text-slate-700 transition">Salin</button>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Script Logika Aplikasi -->
+            <!-- RSVP -->
+            <div class="bg-white py-16 px-6 text-center">
+                <h2 class="text-3xl font-serif font-bold text-slate-900 mb-6">Konfirmasi Kehadiran</h2>
+                <form onsubmit="event.preventDefault(); showToast('✅ RSVP berhasil dikirim!');" class="max-w-md mx-auto space-y-4 text-left">
+                    <input type="text" placeholder="Nama Anda" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm">
+                    <select class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm bg-white">
+                        <option>Hadir</option>
+                        <option>Tidak Hadir</option>
+                        <option>Masih Ragu</option>
+                    </select>
+                    <textarea placeholder="Ucapan & Doa" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm"></textarea>
+                    <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">Kirim Konfirmasi</button>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-slate-900 text-slate-400 py-8 text-center text-xs">
+                <p class="mb-2">Made with ❤️ by <span class="text-white font-semibold">InvitaAI Studio</span></p>
+                <button onclick="window.location.href = window.location.pathname" class="text-brand-400 hover:text-brand-300 underline">Buat Undangan Anda Sendiri</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Pricing Modal -->
+    <div id="pricingModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" onclick="togglePricingModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl p-4">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                <div class="p-8 text-center border-b border-slate-100">
+                    <h2 class="text-2xl font-bold text-slate-900">Upgrade ke Premium</h2>
+                    <p class="text-slate-500 mt-2">Buka fitur eksklusif untuk undangan yang lebih berkesan.</p>
+                </div>
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                    <div class="p-8">
+                        <h3 class="text-lg font-bold text-slate-900">Gratis</h3>
+                        <div class="my-4 text-3xl font-bold">Rp0</div>
+                        <ul class="space-y-3 mb-8 text-sm text-slate-600">
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> 1 Tema Dasar</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Link Undangan Aktif</li>
+                            <li class="flex gap-2 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i> Watermark InvitaAI</li>
+                        </ul>
+                        <button onclick="togglePricingModal()" class="w-full py-2.5 rounded-xl border border-slate-200 font-semibold">Paket Saat Ini</button>
+                    </div>
+                    <div class="p-8 bg-slate-900 text-white relative">
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gold-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full">TERLARIS</div>
+                        <h3 class="text-lg font-bold text-gold-400">Premium</h3>
+                        <div class="my-4 text-3xl font-bold">Rp49.000<span class="text-sm text-slate-400 font-normal">/undangan</span></div>
+                        <ul class="space-y-3 mb-8 text-sm text-slate-200">
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Semua Tema Eksklusif</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Tanpa Watermark</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Fitur Amplop Digital</li>
+                            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-gold-400"></i> Musik Latar & Animasi</li>
+                        </ul>
+                        <button onclick="simulateCheckout()" class="w-full py-2.5 rounded-xl bg-gold-500 text-slate-900 font-bold hover:bg-gold-400 transition">Beli Sekarang</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 z-[110] bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+        <span id="toastMessage" class="text-sm font-medium">Berhasil!</span>
+    </div>
+
     <script>
-        // Simulasi Engine AI untuk Menulis Teks Undangan Dinamis
+        lucide.createIcons();
+
+        // --- 1. ROUTING: Cek apakah mode Viewer atau Editor ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewData = urlParams.get('view');
+
+        if (viewData) {
+            // MODE VIEWER
+            document.getElementById('editorMode').classList.add('hidden');
+            document.getElementById('viewerMode').classList.remove('hidden');
+            document.getElementById('viewerMode').classList.add('flex', 'flex-col');
+            
+            try {
+                const data = JSON.parse(atob(viewData));
+                document.getElementById('viewerNamesCover').innerText = data.names;
+                document.getElementById('viewerNamesMain').innerText = data.names;
+                document.getElementById('viewerLocation').innerText = data.location;
+                
+                const dateObj = new Date(data.date);
+                document.getElementById('viewerDate').innerText = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                
+                // Terapkan tema
+                applyViewerTheme(data.theme);
+            } catch (e) {
+                console.error("Invalid invite data");
+            }
+        } else {
+            // MODE EDITOR
+            document.getElementById('editorMode').classList.remove('hidden');
+            document.getElementById('editorMode').classList.add('flex');
+            generateAIContent(); // Initial load
+        }
+
+        // --- 2. EDITOR LOGIC ---
+        let currentTheme = 'classic';
+        let isPro = false;
+
+        const themes = {
+            classic: { name: 'Royal Emerald', hero: 'bg-emerald-50', accent: 'bg-emerald-400', badge: 'bg-emerald-100 text-emerald-800', story: "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu untuk menyaksikan akad nikah {names} yang insya Allah akan dilaksanakan dengan penuh khidmat." },
+            minimalist: { name: 'Minimalist Cream', hero: 'bg-amber-50', accent: 'bg-amber-400', badge: 'bg-amber-100 text-amber-800', story: "Sebuah babak baru dimulai. Merupakan suatu kebahagiaan istimewa bagi {names} atas kehadiran dan doa restu Anda di hari yang sederhana namun penuh makna ini." },
+            midnight: { name: 'Midnight Gold', hero: 'bg-slate-900', accent: 'bg-gold-500', badge: 'bg-slate-800 text-gold-400 border border-gold-500/30', story: "Di bawah bintang dan cahaya rembulan, {names} mengundang Anda untuk menjadi saksi penyatuan dua hati dalam balutan elegan dan mewah." }
+        };
+
+        function selectTheme(theme) {
+            if ((theme === 'minimalist' || theme === 'midnight') && !isPro) {
+                showToast('🔒 Tema ini khusus Premium. Upgrade untuk membuka!', 'error');
+                togglePricingModal();
+                return;
+            }
+            currentTheme = theme;
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-brand-500', 'bg-slate-100');
+                btn.classList.add('bg-slate-50');
+            });
+            const activeBtn = document.getElementById(`btn-${theme}`);
+            activeBtn.classList.add('ring-2', 'ring-brand-500', 'bg-slate-100');
+            activeBtn.classList.remove('bg-slate-50');
+            generateAIContent();
+        }
+
         function generateAIContent() {
             const names = document.getElementById('inputNames').value || 'Mempelai';
             const date = document.getElementById('inputDate').value;
             const location = document.getElementById('inputLocation').value;
-            const theme = document.getElementById('selectTheme').value;
+            const btn = document.getElementById('btnGenerate');
 
-            // Update Teks Dasar
-            document.getElementById('previewNames').innerText = names;
-            document.getElementById('previewLocationDisplay').innerText = location;
-            
-            if(date) {
-                const formattedDate = new Date(date).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                document.getElementById('previewDateDisplay').innerText = formattedDate;
-            }
+            // Loading state
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>AI Merangkai Kata...</span>`;
+            btn.disabled = true;
+            lucide.createIcons();
 
-            // Variasi Teks AI Berdasarkan Tema
-            const aiStories = {
-                classic: `"${names} mengundang Anda dengan penuh rasa syukur untuk menjadi saksi ikatan suci cinta kasih kami dalam balutan hari yang penuh khidmat."`,
-                minimalist: `"Sebuah babak baru dimulai. Merupakan suatu kebahagiaan istimewa bagi ${names} atas kehadiran dan doa restu Anda."`,
-                romantic: `"Di bawah naungan cinta yang indah, ${names} bersiap melangkah menuju lembaran baru bersama orang-orang tercinta."`
+            setTimeout(() => {
+                const t = themes[currentTheme];
+                
+                // Update Preview DOM
+                document.getElementById('previewNames').innerText = names;
+                document.getElementById('previewLocation').innerText = location;
+                if(date) {
+                    document.getElementById('previewDate').innerText = new Date(date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                }
+
+                const hero = document.getElementById('previewHero');
+                hero.className = `h-2/5 flex flex-col items-center justify-center p-6 text-center relative transition-colors duration-500 ${t.hero}`;
+                
+                document.getElementById('previewBadge').className = `absolute top-8 right-4 text-[9px] uppercase tracking-widest px-2 py-1 rounded-full font-bold transition-colors duration-500 ${t.badge}`;
+                document.getElementById('previewBadge').innerText = t.name;
+                
+                document.getElementById('previewLine').className = `w-16 h-0.5 mx-auto rounded-full transition-colors duration-500 ${t.accent}`;
+                
+                if (currentTheme === 'midnight') {
+                    document.getElementById('previewNames').classList.replace('text-slate-900', 'text-white');
+                } else {
+                    document.getElementById('previewNames').classList.replace('text-white', 'text-slate-900');
+                }
+
+                // Typing effect
+                const finalStory = t.story.replace('{names}', names);
+                const storyEl = document.getElementById('previewStory');
+                storyEl.innerText = "";
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < finalStory.length) {
+                        storyEl.innerHTML += finalStory.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 15);
+                    }
+                };
+                typeWriter();
+
+                // Reset button
+                btn.innerHTML = `<i data-lucide="wand-2" class="w-4 h-4"></i><span>Generate Kata-kata AI</span>`;
+                btn.disabled = false;
+                lucide.createIcons();
+            }, 800);
+        }
+
+        // --- 3. PUBLISH & LINK GENERATION (LADANG CUAN CORE) ---
+        function publishInvitation() {
+            const names = document.getElementById('inputNames').value || 'Undangan';
+            const data = {
+                names: names,
+                date: document.getElementById('inputDate').value,
+                location: document.getElementById('inputLocation').value,
+                theme: currentTheme
             };
-
-            document.getElementById('aiStoryText').innerText = aiStories[theme] || aiStories.classic;
-
-            // Terapkan Desain Dinamis (Warna & Nuansa)
-            applyThemeStyles(theme);
+            
+            // Encode data ke Base64 untuk URL
+            const encoded = btoa(JSON.stringify(data));
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?view=${encoded}`;
+            
+            document.getElementById('shareLink').value = shareUrl;
+            
+            // Simulasi update stats
+            document.getElementById('statViews').innerText = Math.floor(Math.random() * 50) + 1;
+            
+            showToast('🚀 Undangan berhasil dipublish! Link siap dibagikan.');
+            
+            // Animasi feedback
+            const btn = document.querySelector('button[onclick="publishInvitation()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i> Published!`;
+            lucide.createIcons();
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                lucide.createIcons();
+            }, 2000);
         }
 
-        // Fungsi Desain Dinamis
-        function applyThemeStyles(theme) {
-            const card = document.getElementById('previewCard');
-            const badge = document.getElementById('themeBadge');
-            
-            // Reset Class
-            card.className = "w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-500 border flex flex-col text-center p-8 relative";
+        function copyLink() {
+            const link = document.getElementById('shareLink').value;
+            if(link.includes('...')) {
+                showToast('⚠️ Publish undangan terlebih dahulu!', 'error');
+                return;
+            }
+            copyToClipboard(link);
+        }
 
-            if(theme === 'classic') {
-                card.classList.add('border-emerald-100', 'bg-gradient-to-b', 'from-emerald-50/30', 'to-white');
-                badge.className = "absolute top-4 right-4 text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full font-semibold bg-emerald-100 text-emerald-800";
-                badge.innerText = "Royal Emerald";
-            } else if(theme === 'minimalist') {
-                card.classList.add('border-amber-100', 'bg-gradient-to-b', 'from-amber-50/20', 'to-white');
-                badge.className = "absolute top-4 right-4 text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full font-semibold bg-amber-100 text-amber-800";
-                badge.innerText = "Minimalist Cream";
-            } else if(theme === 'romantic') {
-                card.classList.add('border-rose-100', 'bg-gradient-to-b', 'from-rose-50/30', 'to-white');
-                badge.className = "absolute top-4 right-4 text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full font-semibold bg-rose-100 text-rose-800";
-                badge.innerText = "Rose Sunset";
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ Teks berhasil disalin!');
+            });
+        }
+
+        // --- 4. VIEWER LOGIC ---
+        function openInvitation() {
+            const cover = document.getElementById('coverScreen');
+            const main = document.getElementById('mainContent');
+            
+            cover.style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                main.classList.remove('opacity-0');
+                main.classList.add('animate-fade-in-up');
+                // Di sini bisa ditambahkan: document.getElementById('bgMusic').play();
+            }, 500);
+        }
+
+        function applyViewerTheme(theme) {
+            const t = themes[theme];
+            const hero = document.getElementById('viewerHero');
+            hero.className = `min-h-screen flex flex-col items-center justify-center p-8 text-center relative transition-colors duration-500 ${t.hero}`;
+            
+            if (theme === 'midnight') {
+                hero.classList.add('text-white');
+                hero.querySelector('p').classList.replace('text-slate-500', 'text-slate-300');
+                hero.querySelector('h1').classList.replace('text-slate-900', 'text-white');
+                hero.querySelector('div').classList.replace('bg-emerald-400', 'bg-gold-500');
+                hero.querySelector('p.italic').classList.replace('text-slate-600', 'text-slate-300');
+                hero.querySelector('.text-2xl').classList.replace('text-slate-800', 'text-white');
             }
         }
 
-        // Listener untuk Perubahan Tema Secara Instan
-        document.getElementById('selectTheme').addEventListener('change', function() {
-            applyThemeStyles(this.value);
-            generateAIContent();
-        });
-
-        // Jalankan sekali saat load pertama
-        generateAIContent();
-
-        // Fitur Ekspor File HTML Mandiri
-        function exportHTML() {
-            const fullCode = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-            const blob = new Blob([fullCode], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'undangan-digital-custom.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        // --- 5. UTILITIES ---
+        function togglePricingModal() {
+            const modal = document.getElementById('pricingModal');
+            modal.classList.toggle('hidden');
         }
+
+        function simulateCheckout() {
+            showToast('⏳ Mengalihkan ke gateway pembayaran...');
+            setTimeout(() => {
+                isPro = true;
+                togglePricingModal();
+                showToast('🎉 Upgrade Berhasil! Semua tema Premium terbuka.');
+                // Buka kunci UI
+                document.querySelectorAll('.pro-badge').forEach(b => b.style.display = 'none');
+            }, 1500);
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
+
+        // Auto-generate saat input berubah (debounced)
+        let timeout;
+        document.querySelectorAll('#editorMode input').forEach(input => {
+            input.addEventListener('input', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(generateAIContent, 600);
+            });
+        });
     </script>
 </body>
 </html>
